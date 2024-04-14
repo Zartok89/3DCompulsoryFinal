@@ -6,6 +6,7 @@
 #include "glm/fwd.hpp"
 #include "glm/vec3.hpp"
 #include "utility/Transform.h"
+#include "utility/Tag.h"
 
 class Actor
 {

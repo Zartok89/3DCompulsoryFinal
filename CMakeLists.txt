@@ -70,6 +70,8 @@ core/shaders/Shader.h
 core/utility/Logger.h
 core/utility/Transform.h
 core/utility/Defines.h
+core/utility/Tag.h
+core/utility/Types.h
 )
 
 set (SRC_FILES
