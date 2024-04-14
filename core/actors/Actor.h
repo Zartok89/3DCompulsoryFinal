@@ -5,6 +5,7 @@
 
 #include "glm/fwd.hpp"
 #include "glm/vec3.hpp"
+#include "utility/Transform.h"
 
 class Actor
 {
@@ -74,5 +75,4 @@ protected:
 private:
     TagUnique mTag;
     Transform mTransform{};
-
 };

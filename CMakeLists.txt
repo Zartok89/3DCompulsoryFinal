@@ -64,23 +64,24 @@ core/shaders/Shader.h
 
 # Utility Headers
 core/utility/Logger.h
+core/utility/Transform.h
 )
 
 set (SRC_FILES
 3DCompulsoryFinal.cpp
 
-#Actor Headers
+#Actor Source
 core/actors/Scene.cpp
 core/actors/Actor.cpp
 
-#Camera Headers
+#Camera Source
 core/camera/Camera.cpp
 
-#Program source
+#Program Source
 core/program/Application.cpp
 core/program/Window.cpp
 
-#Shader Headers
+#Shader Source
 core/shaders/Shader.cpp
 
 # Utility source
