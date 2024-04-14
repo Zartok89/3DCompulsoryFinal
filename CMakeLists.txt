@@ -48,12 +48,16 @@ set (LIBS
 set (HEADER_FILES
 3DCompulsoryFinal.h
 
-#Actor HeadersglfwDestroyWindow
+#Actor Headers
 core/actors/Scene.h
 core/actors/Actor.h
 
 #Camera Headers
 core/camera/Camera.h
+core/camera/CameraController.h
+
+#Interfaces Headers
+core/interfaces/ControllerInterface.h
 
 #Program Headers
 core/program/Application.h
@@ -65,6 +69,7 @@ core/shaders/Shader.h
 # Utility Headers
 core/utility/Logger.h
 core/utility/Transform.h
+core/utility/Defines.h
 )
 
 set (SRC_FILES
@@ -76,6 +81,7 @@ core/actors/Actor.cpp
 
 #Camera Source
 core/camera/Camera.cpp
+core/camera/CameraController.cpp
 
 #Program Source
 core/program/Application.cpp

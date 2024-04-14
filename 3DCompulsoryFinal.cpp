@@ -6,7 +6,7 @@
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
-#include <stdio.h>
+#include <cstdio>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -19,6 +19,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
+//#include "core/camera/Camera.h"
 #include "core/camera/Camera.h"
 #include "program/Application.h"
 #include "utility/Logger.h"
@@ -268,17 +269,17 @@ int main()
 // ---------------------------------------------------------------------------------------------------------
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) ////
+		glfwSetWindowShouldClose(window, true); ////
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) ////
+		camera.ProcessKeyboard(FORWARD, deltaTime); ////
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) ////
+		camera.ProcessKeyboard(BACKWARD, deltaTime); ////
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) ////
+		camera.ProcessKeyboard(LEFT, deltaTime); ////
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) ////
+		camera.ProcessKeyboard(RIGHT, deltaTime); ////
 }
 
 // glfw: whenever the window size changed (by OS or user resize) this callback function executes
@@ -292,17 +293,17 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height) ////
 
 void mouse_click_callback(GLFWwindow* window, int button, int action, int mods) ////
 {
-    LOG_INFO("Cliking!");
+    LOG_INFO("Cliking!"); ////
 
-	ImGuiIO& io = ImGui::GetIO();
-	if (button >= 0 && button < IM_ARRAYSIZE(io.MouseDown)) {
-		if (action == GLFW_PRESS) {
-			io.MouseDown[button] = true;
-		}
-		else if (action == GLFW_RELEASE) {
-			io.MouseDown[button] = false;
-		}
-	}
+	ImGuiIO& io = ImGui::GetIO(); ////
+	if (button >= 0 && button < IM_ARRAYSIZE(io.MouseDown)) { ////
+		if (action == GLFW_PRESS) { ////
+			io.MouseDown[button] = true; ////
+		} ////
+		else if (action == GLFW_RELEASE) { ////
+			io.MouseDown[button] = false; ////
+		} ////
+	} ////
 
 	// Check if ImGui wants to capture the mouse
 	if (ImGui::GetIO().WantCaptureMouse) ////
@@ -312,45 +313,45 @@ void mouse_click_callback(GLFWwindow* window, int button, int action, int mods) 
 // -------------------------------------------------------
 void mouse_callback(GLFWwindow* window, double xposIn, double yposIn) ////
 {
-	ImGuiIO& io = ImGui::GetIO();
-	io.MousePos = ImVec2(static_cast<float>(xposIn), static_cast<float>(yposIn));
+	ImGuiIO& io = ImGui::GetIO(); ////
+	io.MousePos = ImVec2(static_cast<float>(xposIn), static_cast<float>(yposIn)); ////
 
 	// Check if ImGui wants to capture the mouse
-	if (ImGui::GetIO().WantCaptureMouse)
-		return; // ImGui wants to use the mouse, don't do anything else
+	if (ImGui::GetIO().WantCaptureMouse) ////
+		return; // ImGui wants to use the mouse, don't do anything else ////
 
-	float xpos = static_cast<float>(xposIn);
-	float ypos = static_cast<float>(yposIn);
+	float xpos = static_cast<float>(xposIn); ////
+	float ypos = static_cast<float>(yposIn); ////
 
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
+	if (firstMouse) ////
+	{ ////
+		lastX = xpos; ////
+		lastY = ypos; ////
+		firstMouse = false; ////
+	} ////
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+	float xoffset = xpos - lastX; ////
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top ////
 
-	lastX = xpos;
-	lastY = ypos;
+	lastX = xpos; ////
+	lastY = ypos; ////
 
-	camera.ProcessMouseMovement(xoffset, yoffset);
+	camera.ProcessMouseMovement(xoffset, yoffset); ////
 }
 
 // glfw: whenever the mouse scroll wheel scrolls, this callback is called
 // ----------------------------------------------------------------------
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) ////
 {
-    LOG_INFO("Scrolling!");
+    LOG_INFO("Scrolling!"); ////
 
-	ImGuiIO& io = ImGui::GetIO();
-	io.MouseWheelH += static_cast<float>(xoffset);
-	io.MouseWheel += static_cast<float>(yoffset);
+	ImGuiIO& io = ImGui::GetIO(); ////
+	io.MouseWheelH += static_cast<float>(xoffset); ////
+	io.MouseWheel += static_cast<float>(yoffset); ////
 
 	// Check if ImGui wants to capture the mouse
-	if (ImGui::GetIO().WantCaptureMouse)
+	if (ImGui::GetIO().WantCaptureMouse) ////
 		return; // ImGui wants to use the mouse, don't do anything else
 
-	camera.ProcessMouseScroll(static_cast<float>(yoffset));
+	camera.ProcessMouseScroll(static_cast<float>(yoffset)); ////
 }

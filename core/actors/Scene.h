@@ -27,8 +27,8 @@ public:
     /*
      * Updating the Scene and Scene Graph
      */
-	//void UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
-    //void RenderSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
+	void UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
+    void RenderSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
     void UpdatingScene(float dt); // Updating transforms in the scene using deltaTime
     void RenderingScene(float dt); // Rendering the actors in the scene using deltaTime
 

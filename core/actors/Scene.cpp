@@ -1,11 +1,12 @@
 #include "Scene.h"
 #include <imgui.h>
 #include "camera/Camera.h"
+#include "glad/glad.h"
 #include "utility/Logger.h"
 
 Scene::Scene(const std::string& name)
 {
-
+	
 }
 
 Scene::~Scene()
@@ -22,6 +23,34 @@ void Scene::UnloadContent()
 {
 	LOG_INFO("Scene::UnloadContent");
 
+}
+
+void Scene::UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform)
+{
+	if (!actor) return;
+
+	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetTransformMatrix());
+
+	actor->Update(dt);
+
+	const auto& children = actor->GetChildren();
+	for (Actor* child : children) 
+	{
+		UpdateSceneGraph(child, dt, globalTransform);
+	}
+}
+
+void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
+{
+	if (!actor) return;
+
+	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetTransformMatrix());
+
+	const auto& children = actor->GetChildren();
+	for (Actor* child : children)
+	{
+		RenderSceneGraph(child, dt, globalTransform);
+	}
 }
 
 void Scene::UpdatingScene(float dt)
