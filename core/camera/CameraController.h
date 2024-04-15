@@ -21,7 +21,7 @@ private:
 
     float mLastX = 0.0, mLastY = 0.0;
     bool mRightMousePressed = false;
-    float mouseSensitivity = 0.1f;
+    float mMouseSensitivity = 0.1f;
 
     std::map<int, bool> mKeyStates; // Binding keys to their state to see if its pressed or not
     class Camera* mCamera;

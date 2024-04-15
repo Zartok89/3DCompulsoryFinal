@@ -8,9 +8,6 @@
 #include "utility/Logger.h"
 #include "Interfaces/RenderInterface.h"
 #include "actors/Actor.h"
-#include "graphics/Mesh.h"
-#include "graphics/Material.h"
-#include "camera/Camera.h"
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 

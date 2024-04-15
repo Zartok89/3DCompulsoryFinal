@@ -7,6 +7,7 @@
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/matrix_decompose.hpp>
 #include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
 
 
 // Utility class which does transformations
@@ -94,6 +95,7 @@ public:
     const glm::vec3& GetPosition() const { return mPosition; }
     const glm::quat& GetRotation() const { return mRotation; }
     const glm::vec3& GetScale() const { return mScale; }
+    glm::vec3 GetRightVector() const { return glm::rotate(mRotation, glm::vec3(1.0f, 0.0f, 0.0f)); }
 
     float GetCurrentPitch() const
     {

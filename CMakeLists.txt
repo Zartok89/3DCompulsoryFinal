@@ -46,8 +46,6 @@ set (LIBS
 )
 
 set (HEADER_FILES
-3DCompulsoryFinal.h
-
 #Actor Headers
 core/actors/Actor.h
 core/actors/Scene.h

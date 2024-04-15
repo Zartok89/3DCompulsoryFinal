@@ -58,6 +58,7 @@ public:
     const glm::vec3& GetScale() const { return mTransform.GetScale(); } // Getting the local actor scale
     const glm::mat4 GetTransformMatrix() const { return mTransform.GetTransformMatrix(); } // Getting the local actor transform matrix
     const Transform& GetTransform() const { return mTransform; } // Getting the local actor transform
+    glm::vec3 GetRightVector() const { return mTransform.GetRightVector(); }
     std::vector<Actor*>& GetChildren() { return mChildren; } // Getting the chrildren of this current actor
     //Global transforms
     glm::vec3 GetGlobalPosition() const; // Getting the local actor position by checking the parents position or this one if its a parent
