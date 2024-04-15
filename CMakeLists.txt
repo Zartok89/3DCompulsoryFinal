@@ -50,11 +50,18 @@ set (HEADER_FILES
 
 #Actor Headers
 core/actors/Scene.h
+core/actors/SceneGraph.h
 core/actors/Actor.h
 
 #Camera Headers
 core/camera/Camera.h
 core/camera/CameraController.h
+
+#Graphics Headers
+core/graphics/Texture.h
+core/graphics/Material.h
+core/graphics/Vertex.h
+core/graphics/Mesh.h
 
 #Interfaces Headers
 core/interfaces/ControllerInterface.h
@@ -85,14 +92,17 @@ core/actors/Actor.cpp
 core/camera/Camera.cpp
 core/camera/CameraController.cpp
 
+#Graphics Source
+core/graphics/Texture.cpp
+core/graphics/Material.cpp
+core/graphics/Mesh.cpp
+
 #Program Source
 core/program/Application.cpp
 core/program/Window.cpp
 
 #Shader Source
 core/shaders/Shader.cpp
-
-# Utility source
 )
 
 # Add source to this project's executable.

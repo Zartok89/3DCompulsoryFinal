@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 
+#include "actors/SceneGraph.h"
 #include "camera/Camera.h"
 
 class Scene
@@ -41,5 +42,6 @@ public:
     void MouseScrollCallback(class Window* window, double xoffset, double yoffset); // Mouse scroll callbacks related to the spesific scene
     void KeyCallback(class Window* window, int key, int scancode, int action, int mods); // Keyboard key callbacks related to the spesific scene
 
+    SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
 };

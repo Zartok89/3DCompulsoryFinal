@@ -1,0 +1,75 @@
+#pragma once
+
+#include <array>
+#include <string>
+
+#include "Texture.h"
+#include "glm/vec3.hpp"
+#include "shaders/Shader.h"
+
+class Material
+{
+public:
+	/*
+	 * Material texture properties - Like material graph in Unreal
+	 */
+	enum TextureType
+	{
+		ALBEDO,
+		NORMAL,
+		SPECULAR,
+		AMOUNTOFTEXTURES
+	};
+
+	// Setting default names for the different texture types
+	std::array<std::string, static_cast<size_t>(TextureType::AMOUNTOFTEXTURES)> textureDefaultNames =
+	{ "material.albedoMap",  "material.normalMap", "material.specularMap" };
+
+    // Material properties which can be affected by the textures
+    struct MaterialProperties
+    {
+        glm::vec3 mColor {1.f, 1.f, 1.f};
+        float mShininess{ 1.f };
+    };
+
+	/*
+	 * Constructor, destructor and copy + mover
+	 */
+    Material(const std::string& name); // Constructing the material object
+	Material(const Material&) = delete; // Delete Copy Constructor
+    Material& operator=(const Material&) = delete; // Delete Copy Assignment Operator
+
+	/*
+	 * Loading and unloading material content
+	 */
+	static Material* Load(const std::string& name); // Loading a material with no textures
+    static Material* Load(const std::string& name, const std::array<Texture*, TextureType::AMOUNTOFTEXTURES>& textures, const MaterialProperties& properties); // Loading a material with textures and properties
+    static void Unload(const std::string& name); // Finding the material by name, then deleting it from the cache
+    static void ClearCache() { mCache.clear(); } // Clearing the material cache
+	void BindMaterialTexture(const Shader* shader) const; // Binding the Material and Textures to the shader
+
+	/*
+	 * Getting the texture types and properties
+	 */
+    Texture* GetTexture(TextureType type) const;
+    const MaterialProperties& GetProperties() const { return mProperties; }
+
+	/*
+	 * Setting the texture types and properties
+	 */
+	void SetTexture(TextureType type, Texture* texture);
+    void SetProperties(const MaterialProperties& properties) { mProperties = properties; }
+
+	/*
+	 * Member variables
+	 */
+	MaterialProperties mProperties{};
+    std::array<Texture*, TextureType::AMOUNTOFTEXTURES> mTextures{};
+    static std::unordered_map<std::string, Material*> mCache;
+
+
+	
+
+	
+
+};

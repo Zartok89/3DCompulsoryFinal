@@ -6,7 +6,7 @@
 
 Scene::Scene(const std::string& name)
 {
-	
+	mSceneGraph = name;
 }
 
 Scene::~Scene()
