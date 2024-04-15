@@ -49,19 +49,20 @@ set (HEADER_FILES
 3DCompulsoryFinal.h
 
 #Actor Headers
+core/actors/Actor.h
 core/actors/Scene.h
 core/actors/SceneGraph.h
-core/actors/Actor.h
+core/actors/StaticMeshActor.h
 
 #Camera Headers
 core/camera/Camera.h
 core/camera/CameraController.h
 
 #Graphics Headers
-core/graphics/Texture.h
 core/graphics/Material.h
-core/graphics/Vertex.h
 core/graphics/Mesh.h
+core/graphics/Texture.h
+core/graphics/Vertex.h
 
 #Interfaces Headers
 core/interfaces/ControllerInterface.h
@@ -74,10 +75,10 @@ core/program/Window.h
 core/shaders/Shader.h
 
 # Utility Headers
-core/utility/Logger.h
-core/utility/Transform.h
 core/utility/Defines.h
+core/utility/Logger.h
 core/utility/Tag.h
+core/utility/Transform.h
 core/utility/Types.h
 )
 
@@ -85,17 +86,18 @@ set (SRC_FILES
 3DCompulsoryFinal.cpp
 
 #Actor Source
-core/actors/Scene.cpp
 core/actors/Actor.cpp
+core/actors/Scene.cpp
+core/actors/StaticMeshActor.cpp
 
 #Camera Source
 core/camera/Camera.cpp
 core/camera/CameraController.cpp
 
 #Graphics Source
-core/graphics/Texture.cpp
 core/graphics/Material.cpp
 core/graphics/Mesh.cpp
+core/graphics/Texture.cpp
 
 #Program Source
 core/program/Application.cpp

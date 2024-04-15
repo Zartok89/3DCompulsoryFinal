@@ -2,6 +2,8 @@
 
 #include "utility/Logger.h"
 
+std::unordered_map<std::string, Mesh*> Mesh::mCache;
+
 Mesh::Mesh(const std::string& name, std::vector<Vertex>&& vertices, std::vector<Index>&& indices, Material* material)
 {
 	mVertices = std::move(vertices);

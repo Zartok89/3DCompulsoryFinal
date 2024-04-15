@@ -1,8 +1,12 @@
 #pragma once
+#include <memory>
 #include <string>
 
+#include "StaticMeshActor.h"
 #include "actors/SceneGraph.h"
 #include "camera/Camera.h"
+#include "graphics/Mesh.h"
+#include "interfaces/ControllerInterface.h"
 
 class Scene
 {
@@ -42,6 +46,20 @@ public:
     void MouseScrollCallback(class Window* window, double xoffset, double yoffset); // Mouse scroll callbacks related to the spesific scene
     void KeyCallback(class Window* window, int key, int scancode, int action, int mods); // Keyboard key callbacks related to the spesific scene
 
-    SceneGraph mSceneGraph;
+    /*
+     * Scene Controllers
+     */
+	std::shared_ptr<IController> GetController() const { return mController; }
+    void SetController(const std::shared_ptr<IController>& controller) { mController = controller; }
+
+    /*
+     * Member Variables
+     */
+	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
+	StaticMeshActor* mCube0{nullptr};
+    StaticMeshActor* mCube1{nullptr};
+    class Shader* mShader{ nullptr };
+    std::shared_ptr<IController> mController{ nullptr };
+
 };

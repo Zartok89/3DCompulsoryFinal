@@ -1,11 +1,7 @@
 #include "Actor.h"
 
-#include "glm/matrix.hpp"
-#include "glm/gtc/quaternion.hpp"
-
-Actor::Actor(const std::string& name)
+Actor::Actor(const std::string& name) : mTag(name)
 {
-	mTag = name;
 	mParent = nullptr;
 }
 

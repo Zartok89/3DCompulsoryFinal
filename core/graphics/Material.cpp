@@ -1,5 +1,7 @@
 #include "Material.h"
 
+std::unordered_map<std::string, Material*> Material::mCache;
+
 Material::Material(const std::string& name)
 {
     mTextures.fill(nullptr); // Initialize all texture pointers to nullptr

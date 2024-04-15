@@ -53,7 +53,9 @@ public:
     int GetHeight() const { return mHeight; } // Getting the height of the window
     class GLFWwindow* GetGLFWWindow() const { return mGLFWWindow; }; // Getting the current GLFW window
 
-private:
+    /*
+     * Member variables
+     */
     std::string mName; // Member function name for the window
     int mWidth{1920}, mHeight{1080}; // Member function int for size
     

@@ -36,6 +36,7 @@ void Application::LoadProjectContent()
 
 void Application::Run()
 {
+    LOG_INFO("Application::Run");
 	InitializingApplication();
     LoadProjectContent();
 
@@ -52,6 +53,10 @@ void Application::Run()
         mWindow.Render(deltaTime);
         mWindow.EndFrame();
     }
+
+	Mesh::ClearCache();
+    Material::ClearCache();
+    Texture::ClearCache();
 
     glfwTerminate();
 }

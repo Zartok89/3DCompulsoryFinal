@@ -1,10 +1,7 @@
 #pragma once
 
-#include <string>
 #include <vector>
 
-#include "glm/fwd.hpp"
-#include "glm/vec3.hpp"
 #include "utility/Transform.h"
 #include "utility/Tag.h"
 
@@ -30,7 +27,7 @@ public:
 	Actor(Actor&&) = default;
     Actor& operator=(Actor&&) = default;
 
-	~Actor(); // Defaulted destructor
+    virtual ~Actor(); // Defaulted destructor
 
     /*
      * Virtual functions
@@ -68,12 +65,11 @@ public:
     glm::vec3 GetGlobalScale() const; // Getting the local actor scale by checking the parents scale or this one if its a parent
     glm::mat4 GetGlobalTransformMatrix() const; // Getting the local actor scale by checking the parents scale or this one if its a parent
 
-
-protected:
+    /*
+     * Member variables
+     */
     Actor* mParent{nullptr};
     std::vector<Actor*> mChildren;
-
-private:
     TagUnique mTag;
     Transform mTransform{};
 };

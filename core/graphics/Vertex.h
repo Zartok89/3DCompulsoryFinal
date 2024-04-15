@@ -14,7 +14,7 @@ public:
     {
         mPosition = position;
         mNormal = normal;
-        mTextCoords = texCoords;
+        mTexCoords = texCoords;
     }
 
     static void SetupAttributes() 

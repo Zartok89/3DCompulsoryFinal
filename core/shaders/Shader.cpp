@@ -1,6 +1,6 @@
 #include "Shader.h"
 
-Shader::Shader(const char* vertexPath, const char* fragmentPath)
+Shader::Shader(const std::string& vertexPath, const std::string& fragmentPath)
 {
     // 1. retrieve the vertex/fragment source code from filePath
     std::string vertexCode;
@@ -60,7 +60,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << std::endl;
-    };
+    }
 
     // shader Program
     ID = glCreateProgram();
@@ -80,7 +80,7 @@ Shader::Shader(const char* vertexPath, const char* fragmentPath)
     glDeleteShader(fragment);
 }
 
-void Shader::use()
+void Shader::use() const
 {
     glUseProgram(ID);
 }
