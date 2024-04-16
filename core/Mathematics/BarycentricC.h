@@ -13,6 +13,8 @@
 ///Includes 
 #include "actors/Actor.h"
 #include "graphics/Mesh.h"
+#include "actors/StaticMeshActor.h"
+#include "utility/Logger.h"
 
 class BarycentricC: public Actor, Mesh
 {
@@ -34,15 +36,15 @@ class BarycentricC: public Actor, Mesh
 	}
 
 public:
-	glm::vec3 getBarycentricCoordinates2D(class Mesh* mesh, double& i, double&j, double& k)
+	void getBarycentricCoordinatesActor(class StaticMeshActor* mesh)
 	{
 		//Itterating over n-elements as the same size as mIndices.
 		//After three iterations the 
-		for (int currentVertex = 0; currentVertex < mesh->mIndices.size(); currentVertex+= 3) 
+		for (int currentVertex = 0; currentVertex < mesh->mMesh->mIndices.size(); currentVertex+= 3) 
 		{
-			glm::vec2 Q = { mesh->mVertices[currentVertex].mPosition.x,mesh->mVertices[currentVertex].mPosition.y };
-			glm::vec2 P = { mesh->mVertices[currentVertex+1].mPosition.x,mesh->mVertices[currentVertex+1].mPosition.y };
-			glm::vec2 R = { mesh->mVertices[currentVertex+2].mPosition.z,mesh->mVertices[currentVertex+2].mPosition.y };
+			glm::vec2 Q = { mesh->mMesh->mVertices[currentVertex].mPosition.x,mesh->mMesh->mVertices[currentVertex].mPosition.y };
+			glm::vec2 P = { mesh->mMesh->mVertices[currentVertex+1].mPosition.x,mesh->mMesh->mVertices[currentVertex+1].mPosition.y };
+			glm::vec2 R = { mesh->mMesh->mVertices[currentVertex+2].mPosition.z,mesh->mMesh->mVertices[currentVertex+2].mPosition.y };
 
 			glm::vec2 X = centroid(Q,P,R); 
 
@@ -51,14 +53,16 @@ public:
 			double areaXQP = trinagleArea(X, Q, P);
 			double areaXQR = trinagleArea(X, Q, R); 
 			
-			i = areaXQR / areaQPR;  
-			j = areaXQR / areaQPR;  
-			k = 1.f - i - j; //i+j+k should be 1  
+			mI = areaXQR / areaQPR;  
+			mJ = areaXQR / areaQPR;  
+			mK = 1.f - mI - mK; //i+j+k should be 1  
+
+			std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
 		}
 
 	};
 
-	glm::vec3 getBarycentricCoordinatesActor(const glm::vec2& Q, const glm::vec2& P, const glm::vec2& R,
+	glm::vec3 getBarycentricCoordinates2D(const glm::vec2& Q, const glm::vec2& P, const glm::vec2& R,
 		const glm::vec2& X,
 		double& i, double& j, double& k)
 	{
@@ -72,5 +76,8 @@ public:
 		k = 1.f - i - j; //i+j+k should be 1
 	};
 
-
+private:
+	double mI;
+	double mJ;
+	double mK;
 };
