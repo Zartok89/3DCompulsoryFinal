@@ -1,53 +1,75 @@
 #pragma once
-#include <glm/glm.hpp>
 
-class BarycentricC
+///GLM Lib
+#define GLM_ENABLE_EXPERIMENTAL 
+
+#include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtx/matrix_decompose.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <algorithm>
+
+///Includes 
+#include "actors/Actor.h"
+#include "graphics/Mesh.h"
+
+class BarycentricC: public Actor, Mesh
 {
-	glm::vec2 Cross2D(const glm::vec2 A, const glm::vec2 B)
+	double determinant(const glm::vec2& u, const glm::vec2& v)
 	{
-		float a = A.x * B.y;//Ax * By
-		float b = A.y * B.x;
-		glm::vec2 Cross = { a,-b };
-		return Cross;
+		//Calculates the determinant of the vectors
+		return (u.x * v.y) - (u.y * v.x);
+	}
+
+	double trinagleArea(const glm::vec2& A, const glm::vec2& B, const glm::vec2& C)
+	{
+		//Calculates the area of a triangle
+		return abs(determinant(B - A, C - A) * 0.5);
+	}
+
+	glm::vec2 centroid(const glm::vec2& A, const glm::vec2& B, const glm::vec2& C)
+	{
+		return (A * B * C) / 3.f;
 	}
 
 public:
-	virtual glm::vec3 BarycentricFormula(const glm::vec2& Q, const glm::vec2& P, const glm::vec2& R)
+	glm::vec3 getBarycentricCoordinates2D(class Mesh* mesh, double& i, double&j, double& k)
 	{
-		//Calculating new vectors from vector substraction
-		glm::vec2 PQ = P - Q;
-		glm::vec2 QR = R - Q;
-		glm::vec2 PR = R - P;
-		
-		//glm::vec3 n = Cross2D(PQ, QR); 
-		glm::vec2 n = Cross2D(PQ, QR);
-		float areaPQR = n.length(); //double the area
+		//Itterating over n-elements as the same size as mIndices.
+		//After three iterations the 
+		for (int currentVertex = 0; currentVertex < mesh->mIndices.size(); currentVertex+= 3) 
+		{
+			glm::vec2 Q = { mesh->mVertices[currentVertex].mPosition.x,mesh->mVertices[currentVertex].mPosition.y };
+			glm::vec2 P = { mesh->mVertices[currentVertex+1].mPosition.x,mesh->mVertices[currentVertex+1].mPosition.y };
+			glm::vec2 R = { mesh->mVertices[currentVertex+2].mPosition.z,mesh->mVertices[currentVertex+2].mPosition.y };
 
-		glm::vec3 baryc{};
+			glm::vec2 X = centroid(Q,P,R); 
 
-		//Calc Centre(X)
-		glm::vec2 centreArea = Cross2D(P, Q);
-		float X = centreArea.length() * 0.5;
+			double areaQPR = trinagleArea(Q, P, R);
+			double areaXPR = trinagleArea(X, P, R);
+			double areaXQP = trinagleArea(X, Q, P);
+			double areaXQR = trinagleArea(X, Q, R); 
+			
+			i = areaXQR / areaQPR;  
+			j = areaXQR / areaQPR;  
+			k = 1.f - i - j; //i+j+k should be 1  
+		}
 
-		//Calc u
-		glm::vec2 p = P - X;
-		glm::vec2 q = R - X;
-		n = Cross2D(p, q);
-		baryc.x = 1 / areaPQR;
+	};
 
-		//Calc v
-		p = R - X;
-		q = P - X;
-		n = Cross2D(p, q);
-		baryc.y = 1 / areaPQR;
+	glm::vec3 getBarycentricCoordinatesActor(const glm::vec2& Q, const glm::vec2& P, const glm::vec2& R,
+		const glm::vec2& X,
+		double& i, double& j, double& k)
+	{
+		double areaQPR = trinagleArea(Q, P, R); //Total Area
+		double areaXPR = trinagleArea(X, P, R); 
+		double areaXQP = trinagleArea(X, Q, P); 
+		double areaXQR = trinagleArea(X, Q, R);
 
-		//Calc w
-		p = R - X;
-		q = Q - X;
-		n = Cross2D(p, q);
-		baryc.z = 1 / areaPQR;
-
-		return baryc;
+		i = areaXQR / areaQPR;
+		j = areaXQR / areaQPR;
+		k = 1.f - i - j; //i+j+k should be 1
 	};
 
 
