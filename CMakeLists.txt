@@ -63,7 +63,15 @@ core/graphics/Texture.h
 core/graphics/Vertex.h
 
 #Interfaces Headers
+core/interfaces/CollisionInterface.h
 core/interfaces/ControllerInterface.h
+core/interfaces/RenderInterface.h
+
+#Mathematics Headers
+
+#Physics Headers
+core/physics/AABBcollision.h
+core/physics/BarycentricCollision.h
 
 #Program Headers
 core/program/Application.h
