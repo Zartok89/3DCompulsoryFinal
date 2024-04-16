@@ -18,8 +18,8 @@ void CameraController::HandleMouseMovement(Window* window, double xpos, double y
     mLastX = xpos;
     mLastY = ypos;
 
-    xoffset *= mouseSensitivity;
-    yoffset *= mouseSensitivity;
+    xoffset *= mMouseSensitivity;
+    yoffset *= mMouseSensitivity;
 
     float yawRad = glm::radians(xoffset);
     float pitchRad = glm::radians(yoffset);
