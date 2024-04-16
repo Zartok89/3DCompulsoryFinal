@@ -4,6 +4,7 @@
 #include <utility>
 #include "mathematics/BarycentricC.h"
 
+class BarycentricC;
 class ICollision
 {
 public:
@@ -27,7 +28,7 @@ public:
 		return nullptr;
 	}
 
-	void BarycentricCollision(StaticMeshActor* staticMesh) const
+	void BarycentricCollision(class StaticMeshActor* staticMesh) const
 	{
 		std::cout << "Hello! I am function pointer\n";
 		mBarycentricCPtr->getBarycentricCoordinatesActor(staticMesh);

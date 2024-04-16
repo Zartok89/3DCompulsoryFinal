@@ -16,6 +16,8 @@
 #include "graphics/Mesh.h"
 #include "utility/Logger.h"
 
+class StaticMesh;
+
 class BarycentricC
 {
 public:
@@ -40,26 +42,26 @@ public:
 	void getBarycentricCoordinatesActor(class StaticMeshActor* mesh)
 	{
 		//Itterating over n-elements as the same size as mIndices.
-		//After three iterations the 
-		for (int currentVertex = 0; currentVertex < mesh->mMesh->mIndices.size(); currentVertex+= 3) 
-		{
-			glm::vec2 Q = { mesh->mMesh->mVertices[currentVertex].mPosition.x,mesh->mMesh->mVertices[currentVertex].mPosition.y };
-			glm::vec2 P = { mesh->mMesh->mVertices[currentVertex+1].mPosition.x,mesh->mMesh->mVertices[currentVertex+1].mPosition.y };
-			glm::vec2 R = { mesh->mMesh->mVertices[currentVertex+2].mPosition.z,mesh->mMesh->mVertices[currentVertex+2].mPosition.y };
+		//After three iterations the function skips by three
+		//for (int currentVertex = 0; currentVertex < mesh->mMesh->mIndices.size(); currentVertex+= 3) 
+		//{
+		//	glm::vec2 Q = { mesh->mMesh->mVertices[currentVertex].mPosition.x,mesh->mMesh->mVertices[currentVertex].mPosition.y };
+		//	glm::vec2 P = { mesh->mMesh->mVertices[currentVertex+1].mPosition.x,mesh->mMesh->mVertices[currentVertex+1].mPosition.y };
+		//	glm::vec2 R = { mesh->mMesh->mVertices[currentVertex+2].mPosition.z,mesh->mMesh->mVertices[currentVertex+2].mPosition.y };
 
-			glm::vec2 X = centroid(Q,P,R); 
+		//	glm::vec2 X = centroid(Q,P,R); 
 
-			double areaQPR = trinagleArea(Q, P, R);
-			double areaXPR = trinagleArea(X, P, R);
-			double areaXQP = trinagleArea(X, Q, P);
-			double areaXQR = trinagleArea(X, Q, R); 
-			
-			mI = areaXQR / areaQPR;  
-			mJ = areaXQR / areaQPR;  
-			mK = 1.f - mI - mK; //i+j+k should be 1  
+		//	double areaQPR = trinagleArea(Q, P, R);
+		//	double areaXPR = trinagleArea(X, P, R);
+		//	double areaXQP = trinagleArea(X, Q, P);
+		//	double areaXQR = trinagleArea(X, Q, R); 
+		//	
+		//	mI = areaXQR / areaQPR;  
+		//	mJ = areaXQR / areaQPR;  
+		//	mK = 1.f - mI - mK; //i+j+k should be 1  
 
-			std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
-		}
+		//	std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
+		//}
 
 	}
 
