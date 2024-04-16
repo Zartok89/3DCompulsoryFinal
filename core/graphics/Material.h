@@ -45,7 +45,7 @@ public:
 	static Material* Load(const std::string& name); // Loading a material with no textures
     static Material* Load(const std::string& name, const std::array<Texture*, TextureType::AMOUNTOFTEXTURES>& textures, const MaterialProperties& properties); // Loading a material with textures and properties
     static void Unload(const std::string& name); // Finding the material by name, then deleting it from the cache
-    static void ClearCache() { mCache.clear(); } // Clearing the material cache
+    static void ClearCache(); // Clearing the material cache
 	void BindMaterialTexture(const Shader* shader) const; // Binding the Material and Textures to the shader
 
 	/*

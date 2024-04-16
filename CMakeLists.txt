@@ -48,6 +48,7 @@ set (LIBS
 set (HEADER_FILES
 #Actor Headers
 core/actors/Actor.h
+core/actors/ActorController.h
 core/actors/Scene.h
 core/actors/SceneGraph.h
 core/actors/StaticMeshActor.h
@@ -94,6 +95,7 @@ set (SRC_FILES
 
 #Actor Source
 core/actors/Actor.cpp
+core/actors/ActorController.cpp
 core/actors/Scene.cpp
 core/actors/StaticMeshActor.cpp
 

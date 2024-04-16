@@ -2,9 +2,11 @@
 #include <memory>
 #include <string>
 
+#include "ActorController.h"
 #include "StaticMeshActor.h"
 #include "actors/SceneGraph.h"
 #include "camera/Camera.h"
+#include "camera/CameraController.h"
 #include "graphics/Mesh.h"
 #include "interfaces/ControllerInterface.h"
 
@@ -36,6 +38,9 @@ public:
     void RenderSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
     void UpdatingScene(float dt); // Updating transforms in the scene using deltaTime
     void RenderingScene(float dt); // Rendering the actors in the scene using deltaTime
+    void UpdateCurrentController(float dt); // Updating the current controller
+    void HandleCollision(); // Handling the collision updating objects
+    void RenderGUI(); // Render the ingame GUI
 
     /*
      * Callbacks used in the spesific scenes
@@ -49,8 +54,11 @@ public:
     /*
      * Scene Controllers
      */
-	std::shared_ptr<IController> GetController() const { return mController; }
-    void SetController(const std::shared_ptr<IController>& controller) { mController = controller; }
+	std::shared_ptr<IController> GetController() const { return mCurrentController; }
+    void SetController(const std::shared_ptr<IController>& controller) { mCurrentController = controller; }
+	std::shared_ptr<ActorController> mActorController;
+    std::shared_ptr<CameraController> mCameraController;
+	std::shared_ptr<IController> mCurrentController{ nullptr };
 
     /*
      * Member Variables
@@ -59,7 +67,8 @@ public:
     Camera mSceneCamera{ "SceneCamera" };
 	StaticMeshActor* mCube0{nullptr};
     StaticMeshActor* mCube1{nullptr};
+    StaticMeshActor* mCube2{nullptr};
     class Shader* mShader{ nullptr };
-    std::shared_ptr<IController> mController{ nullptr };
+
 
 };

@@ -32,7 +32,7 @@ public:
     /*
      * Virtual functions
      */
-    virtual void Update(float dt) {}; // Update function to be overriden by classes inheriting from Actor
+    virtual void Update(float dt) {} // Update function to be overriden by classes inheriting from Actor
 
     /*
      * Operations used to add and remove actors to the scene graph
@@ -65,6 +65,17 @@ public:
     glm::quat GetGlobalRotation() const; // Getting the local actor rotation by checking the parents rotation or this one if its a parent
     glm::vec3 GetGlobalScale() const; // Getting the local actor scale by checking the parents scale or this one if its a parent
     glm::mat4 GetGlobalTransformMatrix() const; // Getting the local actor scale by checking the parents scale or this one if its a parent
+
+    // Query template function
+	template <typename T>
+    void Query(std::vector<Actor*>& actors)
+    {
+        if (dynamic_cast<T*>(this))
+            actors.emplace_back(this);
+
+        for (auto child : this->mChildren)
+            child->Query<T>(actors);
+    }
 
     /*
      * Member variables
