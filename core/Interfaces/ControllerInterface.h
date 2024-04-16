@@ -8,6 +8,7 @@ public:
     /*
     * Virtual functions for handling input events
     */
+    virtual void UpdateCurrentController(float dt) = 0;
     virtual void HandleMouseMovement(class Window* window, double xpos, double ypos) = 0;
     virtual void HandleMouseScroll(class Window* window, double xoffset, double yoffset) = 0;
     virtual void HandleMouseButton(class Window* window, int button, int action, int mods) = 0;

@@ -10,10 +10,10 @@ public:
 		switch (index)
 		{
 		case 1:
-			return AABB();
+			return 0/*AABB()*/;
 			break;
 		case 2:
-			return BarycentricCollision();
+			return 0/*BarycentricCollision()*/;
 			break;
 		default:
 			return 0;

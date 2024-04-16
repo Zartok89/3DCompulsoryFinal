@@ -19,7 +19,7 @@ public:
 	void DrawMesh(const Shader* shader) const; // Binding the VAO and drawing the mesh
     static Mesh* Load(const std::string& path); // Loading all the meshes in a given path from the cache
     static void Unload(const std::string& path); // Erasing all the meshes in a given path from the cache
-    static void ClearCache() { mCache.clear(); } // Clearing the cache
+    static void ClearCache(); // Clearing the cache
 
     /*
      * Test functions

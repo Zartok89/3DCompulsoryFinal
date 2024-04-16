@@ -54,7 +54,24 @@ void CameraController::HandleMouseButton(Window* window, int button, int action,
     }
 }
 
-void CameraController::UpdateCameraAcceleration()
+//void CameraController::UpdateCameraAcceleration()
+//{
+//    auto acceleration = mCamera->GetAcceleration();
+//    float movementSpeed = mCamera->GetAccelerationSpeed();
+//
+//    acceleration = glm::vec3(0.f);
+//
+//    if (mKeyStates[GLFW_KEY_W]) acceleration.z += movementSpeed;
+//    if (mKeyStates[GLFW_KEY_S]) acceleration.z -= movementSpeed;
+//    if (mKeyStates[GLFW_KEY_A]) acceleration.x -= movementSpeed;
+//    if (mKeyStates[GLFW_KEY_D]) acceleration.x += movementSpeed;
+//    if (mKeyStates[GLFW_KEY_E]) acceleration.y += movementSpeed;
+//    if (mKeyStates[GLFW_KEY_Q]) acceleration.y -= movementSpeed;
+//
+//    mCamera->SetAcceleration(acceleration);
+//}
+
+void CameraController::UpdateCurrentController(float dt)
 {
     auto acceleration = mCamera->GetAcceleration();
     float movementSpeed = mCamera->GetAccelerationSpeed();
@@ -84,7 +101,8 @@ void CameraController::HandleKeyboard(Window* window, int key, int scancode, int
         mKeyStates[key] = false;
     }
 
-    UpdateCameraAcceleration();
+    UpdateCurrentController(0);
+    //UpdateCameraAcceleration();
 }
 
 void CameraController::HandleMouseScroll(Window* window, double xoffset, double yoffset){}

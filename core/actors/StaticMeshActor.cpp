@@ -10,3 +10,8 @@ void StaticMeshActor::Draw(const Shader* shader) const
 	if (!mMesh) return;
 	mMesh->DrawMesh(shader);
 }
+
+void* StaticMeshActor::ChooseCollisionType(int index)
+{
+	return ICollision::ChooseCollisionType(index);
+}
