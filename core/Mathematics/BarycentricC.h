@@ -10,14 +10,16 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <algorithm>
 
-///Includes 
-#include "actors/Actor.h"
-#include "graphics/Mesh.h"
+///Includes
 #include "actors/StaticMeshActor.h"
+#include "actors/StaticMeshActor.h"
+#include "graphics/Mesh.h"
 #include "utility/Logger.h"
 
-class BarycentricC: public Actor, Mesh
+class BarycentricC
 {
+public:
+
 	double determinant(const glm::vec2& u, const glm::vec2& v)
 	{
 		//Calculates the determinant of the vectors
@@ -35,7 +37,6 @@ class BarycentricC: public Actor, Mesh
 		return (A * B * C) / 3.f;
 	}
 
-public:
 	void getBarycentricCoordinatesActor(class StaticMeshActor* mesh)
 	{
 		//Itterating over n-elements as the same size as mIndices.
@@ -60,7 +61,7 @@ public:
 			std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
 		}
 
-	};
+	}
 
 	glm::vec3 getBarycentricCoordinates2D(const glm::vec2& Q, const glm::vec2& P, const glm::vec2& R,
 		const glm::vec2& X,
@@ -74,7 +75,8 @@ public:
 		i = areaXQR / areaQPR;
 		j = areaXQR / areaQPR;
 		k = 1.f - i - j; //i+j+k should be 1
-	};
+	}
+
 
 private:
 	double mI;

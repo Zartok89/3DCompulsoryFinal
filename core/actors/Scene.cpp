@@ -33,6 +33,7 @@ void Scene::LoadContent()
 
 	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
+	mCube0->ChooseCollisionType(2);
 
 	mSceneCamera.SetPosition({ 0.f, 0.f, 10.f });
 

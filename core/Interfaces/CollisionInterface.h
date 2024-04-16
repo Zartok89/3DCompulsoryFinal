@@ -1,11 +1,17 @@
 #pragma once
-#include <functional>
+#include <iostream>
+#include <unordered_map>
+#include <utility>
+#include "mathematics/BarycentricC.h"
 
 class ICollision
 {
 public:
+	// Creating a empty function pointer
+	using FunctionPtr = void (*)();
+
 	// Index 1 = AABB, Index 2 = Barycentric Coordinates Collision
-	inline virtual void (*ChooseCollisionType(int index))
+	virtual void (*ChooseCollisionType(int index))
 	{
 		switch (index)
 		{
@@ -13,10 +19,24 @@ public:
 			return 0/*AABB()*/;
 			break;
 		case 2:
-			return 0/*BarycentricCollision()*/;
+			BarycentricCollision(mStaticMeshPointer);
 			break;
 		default:
-			return 0;
+			return nullptr;
 		}
-	};
+		return nullptr;
+	}
+
+	void BarycentricCollision(StaticMeshActor* staticMesh) const
+	{
+		std::cout << "Hello! I am function pointer\n";
+		mBarycentricCPtr->getBarycentricCoordinatesActor(staticMesh);
+	}
+
+	/*
+	 * Member Variables
+	 */
+	BarycentricC* mBarycentricCPtr;
+	StaticMeshActor* mStaticMeshPointer;
+
 };

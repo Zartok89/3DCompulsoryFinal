@@ -13,7 +13,7 @@ public:
      * Virtual Functions
      */
     void Draw(const Shader* shader = nullptr) const override;
-    void* ChooseCollisionType(int index) override;
+	void* ChooseCollisionType(int index) override; // Index 1 = AABB, Index 2 = Barycentric Coordinates Collision
 
     /*
      * Member variables

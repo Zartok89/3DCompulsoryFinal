@@ -72,6 +72,8 @@ void Camera::UpdateVelocity(float dt)
     {
         mVelocity = glm::normalize(mVelocity) * mMaxMovementSpeed;
     }
+
+    mAcceleration = glm::vec3(0.f);
 }
 
 void Camera::UpdateDamping(float dt)

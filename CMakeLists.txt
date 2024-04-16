@@ -69,7 +69,7 @@ core/interfaces/ControllerInterface.h
 core/interfaces/RenderInterface.h
 
 #Mathematics Headers
-core/Mathematics/BarycentricC.h
+core/mathematics/BarycentricC.h
 
 #Physics Headers
 core/physics/AABBcollision.h

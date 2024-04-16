@@ -6,6 +6,7 @@
 
 class Camera : public Actor
 {
+
 public:
     //Camera Constructor 
     Camera(const std::string& name,
