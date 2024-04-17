@@ -15,34 +15,66 @@ Scene::~Scene()
 {
 }
 
-void Scene::LoadContent()
+void Scene::MeshActorLoading(Material* mat)
 {
-	LOG_INFO("Scene::LoadContent");
-
-	auto tex = Texture::Load(SOURCE_DIRECTORY + "textures/container.jpg");
-	auto mat = Material::Load("Default", { tex }, {});
-
 	mCube0 = new StaticMeshActor("Cube0", Mesh::CreateCube(mat));
 	mCube1 = new StaticMeshActor("Cube1", Mesh::CreateCube(mat));
 	mCube2 = new StaticMeshActor("Cube2", Mesh::CreateCube(mat));
+}
 
+void Scene::LightingActorLoading()
+{
+	mPointLight = new PointLight("Point light 0");
+	mDirectionalLight = new DirectionalLight("Directional light");
+}
+
+void Scene::ActorHierarchyLoading()
+{
 	mSceneGraph.AddChild(&mSceneCamera);
 	mSceneGraph.AddChild(mCube0);
 	mCube0->AddChild(mCube1);
 	mSceneGraph.AddChild(mCube2);
+	mSceneGraph.AddChild(mDirectionalLight);
+}
 
+void Scene::ActorPositionCollisionLoading()
+{
 	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube0->ChooseCollisionType(2);
+	mDirectionalLight->SetRotation(glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+}
 
+void Scene::CameraAndControllerLoading()
+{
 	mSceneCamera.SetPosition({ 0.f, 0.f, 10.f });
-
 	mActorController = std::make_shared<ActorController>(mCube0);
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
-
 	mCurrentController = mCameraController;
+}
+
+void Scene::MaterialTextureLoading(Material*& material)
+{
+	Texture* diffuseTexture = Texture::Load(SOURCE_DIRECTORY + "textures/container2.jpg");
+	Texture* specularTexture = Texture::Load(SOURCE_DIRECTORY + "textures/container2_specular.jpg");
+	material = Material::Load("Default", { diffuseTexture, specularTexture }, {});
+}
+
+void Scene::LoadContent()
+{
+	LOG_INFO("Scene::LoadContent");
+	Material* material;
+	MaterialTextureLoading(material);
+	MeshActorLoading(material);
+	LightingActorLoading();
 
 	mShader = new Shader(SOURCE_DIRECTORY + "core/shaders/shader.vs", SOURCE_DIRECTORY + "core/shaders/shader.fs");
+
+
+	ActorHierarchyLoading();
+	ActorPositionCollisionLoading();
+	CameraAndControllerLoading();
+
 
 }
 
@@ -54,6 +86,8 @@ void Scene::UnloadContent()
 	delete mCube0;
 	delete mCube1;
 	delete mCube2;
+	delete mPointLight;
+	delete mDirectionalLight;
 
 	Mesh::ClearCache();
 	Material::ClearCache();
@@ -64,7 +98,7 @@ void Scene::UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform)
 {
 	if (!actor) return;
 
-	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetTransformMatrix());
+	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetLocalTransformMatrix());
 
 	actor->Update(dt);
 
@@ -79,14 +113,11 @@ void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
 {
 	if (!actor) return;
 
-	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetTransformMatrix());
+	globalTransform.SetTransformMatrix(globalTransform.GetTransformMatrix() * actor->GetLocalTransformMatrix());
 
 	if (auto iRender = dynamic_cast<IRender*>(actor))
 	{
-		mShader->use();
 		mShader->setMat4("model", globalTransform.GetTransformMatrix());
-		mShader->setMat4("view", mSceneCamera.GetViewMatrix());
-		mShader->setMat4("projection", mSceneCamera.GetProjectionMatrix());
 		iRender->Draw(mShader);
 	}
 
@@ -104,16 +135,46 @@ void Scene::UpdatingScene(float dt)
 	HandleCollision();
 }
 
-void Scene::RenderingScene(float dt)
+void Scene::BindDirectionalLight()
 {
-	static bool bShowDemoWindow = false;
-	if (bShowDemoWindow)
-	{ 
-		ImGui::ShowDemoWindow(&bShowDemoWindow);
+	// Bind Directional light
+	std::vector<Actor*> directionalLights;
+	mSceneGraph.Query<DirectionalLight>(directionalLights);
+	if (!directionalLights.empty())
+	{
+		auto dl = dynamic_cast<DirectionalLight*>(directionalLights[0]);
+		mShader->setVec3("dl.direction", glm::normalize(dl->GetDirection()));
+		mShader->setVec3("dl.color", dl->mColor);
+		mShader->setVec3("dl.ambient", dl->mAmbient);
 	}
-	RenderGUI();
-	glEnable(GL_DEPTH_TEST);
-	RenderSceneGraph(&mSceneGraph, dt);
+}
+
+void Scene::BindPointLights()
+{
+	// Bind Point lights
+	std::vector<Actor*> pointLightActors;
+	mSceneGraph.Query<PointLight>(pointLightActors);
+
+	mShader->setInt("numPointLights", pointLightActors.size());
+	for (int i = 0; i < pointLightActors.size(); i++)
+	{
+		auto pl = dynamic_cast<PointLight*>(pointLightActors[i]);
+
+		std::string pointLightArrayIndex = "pointLights[" + std::to_string(i) + "]";
+		mShader->setVec3(pointLightArrayIndex + ".ambient", pl->mAmbient);
+		mShader->setVec3(pointLightArrayIndex + ".color", pl->mColor);
+		mShader->setVec3(pointLightArrayIndex + ".position", pl->GetGlobalPosition());
+		mShader->setFloat(pointLightArrayIndex + ".constant", pl->mConstant);
+		mShader->setFloat(pointLightArrayIndex + ".linear", pl->mLinear);
+		mShader->setFloat(pointLightArrayIndex + ".quadratic", pl->mQuadratic);
+	}
+}
+
+void Scene::BindCamera()
+{
+	mShader->setMat4("view", mSceneCamera.GetViewMatrix());
+	mShader->setMat4("projection", mSceneCamera.GetProjectionMatrix());
+	mShader->setVec3("viewPos", mSceneCamera.GetGlobalPosition());
 }
 
 void Scene::UpdateCurrentController(float dt)
@@ -169,6 +230,26 @@ void Scene::RenderGUI()
 	}
 
 	ImGui::End();
+}
+
+void Scene::RenderingScene(float dt)
+{
+	static bool bShowDemoWindow = false;
+	if (bShowDemoWindow)
+	{ 
+		ImGui::ShowDemoWindow(&bShowDemoWindow);
+	}
+	glEnable(GL_DEPTH_TEST);
+
+	// Bind Shader, only using 1 shader for now
+	mShader->use();
+
+	// Bind
+	BindDirectionalLight();
+	BindPointLights();
+	BindCamera();
+	RenderSceneGraph(&mSceneGraph, dt);
+	RenderGUI();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

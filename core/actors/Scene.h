@@ -9,6 +9,8 @@
 #include "camera/CameraController.h"
 #include "graphics/Mesh.h"
 #include "interfaces/ControllerInterface.h"
+#include "lighting/PointLight.h"
+#include "lighting/DirectionalLight.h"
 
 class Scene
 {
@@ -16,8 +18,14 @@ class Scene
 public:
 	explicit Scene(const std::string& name); // A constructor which wont allow for implicit conversions
     virtual ~Scene(); // A virtual deconstructor which lets the objects inheriting override the function
+	void MaterialTextureLoading(Material*& material);
+	void LightingActorLoading();
+	void MeshActorLoading(Material* mat);
+	void ActorHierarchyLoading();
+	void ActorPositionCollisionLoading();
+	void CameraAndControllerLoading();
 
-    /*
+	/*
      * Operators
      */
     Scene(const Scene&) = delete; // Delete copy constructor
@@ -38,6 +46,9 @@ public:
     void RenderSceneGraph(Actor* actor, float dt, Transform globalTransform = Transform{});
     void UpdatingScene(float dt); // Updating transforms in the scene using deltaTime
     void RenderingScene(float dt); // Rendering the actors in the scene using deltaTime
+	void BindDirectionalLight(); // 
+    void BindPointLights(); // 
+    void BindCamera(); // 
     void UpdateCurrentController(float dt); // Updating the current controller
     void HandleCollision(); // Handling the collision updating objects
     void RenderGUI(); // Render the ingame GUI
@@ -69,6 +80,8 @@ public:
     StaticMeshActor* mCube1{nullptr};
     StaticMeshActor* mCube2{nullptr};
     class Shader* mShader{ nullptr };
+	PointLight* mPointLight{ nullptr };
+    DirectionalLight* mDirectionalLight{ nullptr };
 
 
 };

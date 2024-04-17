@@ -151,7 +151,7 @@ glm::mat4 Actor::GetGlobalTransformMatrix() const
     const Actor* current = this;
     while (current->mParent != nullptr)
     {
-        globalTransform = current->mParent->GetTransformMatrix() * globalTransform;
+        globalTransform = current->mParent->GetLocalTransformMatrix() * globalTransform;
         current = current->mParent;
     }
     return globalTransform;

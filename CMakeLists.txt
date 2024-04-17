@@ -68,6 +68,10 @@ core/interfaces/CollisionInterface.h
 core/interfaces/ControllerInterface.h
 core/interfaces/RenderInterface.h
 
+#Lighting Headers
+core/lighting/DirectionalLight.h
+core/lighting/PointLight.h
+
 #Mathematics Headers
 core/mathematics/BarycentricC.h
 

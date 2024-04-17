@@ -6,12 +6,12 @@ public:
     glm::vec3 center{0.f, 0.f ,0.f};
     glm::vec3 extent{0.5f, 0.5f, 0.5f};
 
-    AABB(const glm::vec3& center, const glm::vec3& extent) : center(center), extent(extent) {}
+    AABBcollision(const glm::vec3& center, const glm::vec3& extent) : center(center), extent(extent) {}
 
     // Calculate intersection between this AABB and another
     // Returns true if there's an intersection, false otherwise.
     // If mtv is not nullptr and there's an intersection, it will store the Minimum Translation Vector to resolve the collision.
-    bool Intersect(const AABB& other, glm::vec3* mtv) const 
+    bool Intersect(const AABBcollision& other, glm::vec3* mtv) const 
     {
         glm::vec3 diff = other.center - this->center;
         glm::vec3 sumExtent = this->extent + other.extent;

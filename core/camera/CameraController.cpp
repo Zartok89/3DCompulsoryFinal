@@ -24,7 +24,7 @@ void CameraController::HandleMouseMovement(Window* window, double xpos, double y
     float yawRad = glm::radians(xoffset);
     float pitchRad = glm::radians(yoffset);
 
-    glm::quat currentOrientation = mCamera->GetRotation();
+    glm::quat currentOrientation = mCamera->GetLocalRotation();
     glm::quat yawRotation = glm::angleAxis(yawRad, glm::vec3(0.0f, 1.0f, 0.0f));
     glm::quat pitchRotation = glm::angleAxis(pitchRad, glm::vec3(1.0f, 0.0f, 0.0f));
     glm::quat newOrientation = yawRotation * currentOrientation * pitchRotation;

@@ -15,21 +15,22 @@ public:
 	 */
 	enum TextureType
 	{
-		ALBEDO,
-		NORMAL,
-		SPECULAR,
-		AMOUNTOFTEXTURES
+		ALBEDO, // Base color
+		NORMAL, // Direction and hight information
+		DIFFUSE, // Even light spread
+		SPECULAR, // Light spread at an angle
+		AMOUNTOFTEXTURES // How many textures there are in total
 	};
 
 	// Setting default names for the different texture types
 	std::array<std::string, static_cast<size_t>(TextureType::AMOUNTOFTEXTURES)> textureDefaultNames =
-	{ "material.albedoMap",  "material.normalMap", "material.specularMap" };
+	{ "material.albedoMap",  "material.normalMap", "material.diffuseMap","material.specularMap" };
 
     // Material properties which can be affected by the textures
     struct MaterialProperties
     {
         glm::vec3 mColor {1.f, 1.f, 1.f};
-        float mShininess{ 1.f };
+        float mShininess{ 64.f };
     };
 
 	/*
@@ -38,6 +39,8 @@ public:
     Material(const std::string& name); // Constructing the material object
 	Material(const Material&) = delete; // Delete Copy Constructor
     Material& operator=(const Material&) = delete; // Delete Copy Assignment Operator
+	Material(Material&&) = delete;
+    Material& operator=(Material&&) = delete;
 
 	/*
 	 * Loading and unloading material content

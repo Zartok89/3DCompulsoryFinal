@@ -96,7 +96,8 @@ public:
     const glm::quat& GetRotation() const { return mRotation; }
     const glm::vec3& GetScale() const { return mScale; }
     glm::vec3 GetRightVector() const { return glm::rotate(mRotation, glm::vec3(1.0f, 0.0f, 0.0f)); }
-
+	glm::vec3 GetForwardVector() const { return glm::rotate(mRotation, glm::vec3(0.0f, 0.0f, -1.0f)); }
+    glm::vec3 GetUpVector() const { return glm::rotate(mRotation, glm::vec3(0.0f, 1.0f, 0.0f)); }
     float GetCurrentPitch() const
     {
         glm::vec3 eulerAngles = glm::eulerAngles(mRotation);

@@ -36,7 +36,7 @@ void Window::InitializingWindow()
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-       std::runtime_error("Failed to initialize glad");
+       throw std::runtime_error("Failed to initialize glad");
     }
 
 	IMGUI_CHECKVERSION();

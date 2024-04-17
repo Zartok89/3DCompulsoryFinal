@@ -3,6 +3,7 @@
 #include <unordered_map>
 #include <utility>
 #include "mathematics/BarycentricC.h"
+#include "physics/AABBcollision.h"
 
 class BarycentricC;
 class ICollision
@@ -17,7 +18,8 @@ public:
 		switch (index)
 		{
 		case 1:
-			return 0/*AABB()*/;
+			glm::vec3* Vec3Ptr;
+			AABB(glm::vec3(1.f), glm::vec3(4.f), Vec3Ptr);
 			break;
 		case 2:
 			BarycentricCollision(mStaticMeshPointer);
@@ -34,10 +36,17 @@ public:
 		mBarycentricCPtr->getBarycentricCoordinatesActor(staticMesh);
 	}
 
+	void AABB(const glm::vec3& center, const glm::vec3& extent, glm::vec3* mtv)
+	{
+		AABBcollision(center, extent);
+		AABBPtr->Intersect(AABBcollision(center, extent), mtv);
+	}
+
 	/*
-	 * Member Variables
+	 * Pointers to other classes
 	 */
 	BarycentricC* mBarycentricCPtr;
+	AABBcollision* AABBPtr;
 	StaticMeshActor* mStaticMeshPointer;
 
 };

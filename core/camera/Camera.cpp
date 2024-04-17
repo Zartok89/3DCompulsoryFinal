@@ -40,17 +40,17 @@ void Camera::SetAspectRatio(float aspectRatio)
 
 glm::vec3 Camera::GetForwardVector() const
 {
-    return glm::rotate(GetRotation(), glm::vec3(0.0f, 0.0f, -1.0f));
+    return glm::rotate(GetLocalRotation(), glm::vec3(0.0f, 0.0f, -1.0f));
 }
 
 glm::vec3 Camera::GetUpVector() const
 {
-    return glm::rotate(GetRotation(), glm::vec3(0.0f, 1.0f, 0.0f));
+    return glm::rotate(GetLocalRotation(), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-    return glm::lookAt(GetPosition(), GetPosition() + GetForwardVector(), glm::vec3(0.0f, 1.0f, 0.0f));
+    return glm::lookAt(GetLocalPosition(), GetLocalPosition() + GetForwardVector(), glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 const glm::mat4& Camera::GetProjectionMatrix() const
@@ -94,7 +94,7 @@ void Camera::UpdatePosition(float dt)
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
     glm::vec3 up = glm::cross(right, front);
 
-    SetPosition(GetPosition() + mVelocity.x * dt * right + mVelocity.y * dt * up + mVelocity.z * dt * front);
+    SetPosition(GetLocalPosition() + mVelocity.x * dt * right + mVelocity.y * dt * up + mVelocity.z * dt * front);
 }
 
 void Camera::UpdateProjectionMatrix()
