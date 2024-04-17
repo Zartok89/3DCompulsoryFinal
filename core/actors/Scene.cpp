@@ -8,6 +8,7 @@
 #include "utility/Logger.h"
 #include "Interfaces/RenderInterface.h"
 #include "actors/Actor.h"
+#include "graphics/Skybox.h"
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
@@ -20,6 +21,14 @@ void Scene::MeshActorLoading(Material* mat)
 	mCube0 = new StaticMeshActor("Cube0", Mesh::CreateCube(mat));
 	mCube1 = new StaticMeshActor("Cube1", Mesh::CreateCube(mat));
 	mCube2 = new StaticMeshActor("Cube2", Mesh::CreateCube(mat));
+	mSkybox = new Skybox({
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_left.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_right.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_up.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_down.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_front.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_back.png",
+		});
 }
 
 void Scene::LightingActorLoading()
@@ -42,7 +51,7 @@ void Scene::ActorPositionCollisionLoading()
 	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube0->ChooseCollisionType(2);
-	mDirectionalLight->SetRotation(glm::angleAxis(glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f)));
+	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
 }
 
 void Scene::CameraAndControllerLoading()
@@ -55,8 +64,8 @@ void Scene::CameraAndControllerLoading()
 
 void Scene::MaterialTextureLoading(Material*& material)
 {
-	Texture* diffuseTexture = Texture::Load(SOURCE_DIRECTORY + "textures/container2.jpg");
-	Texture* specularTexture = Texture::Load(SOURCE_DIRECTORY + "textures/container2_specular.jpg");
+	Texture* diffuseTexture = Texture::Load(SOURCE_DIRECTORY + "assets/textures/container2.jpg");
+	Texture* specularTexture = Texture::Load(SOURCE_DIRECTORY + "assets/textures/container2_specular.jpg");
 	material = Material::Load("Default", { diffuseTexture, specularTexture }, {});
 }
 
@@ -88,6 +97,7 @@ void Scene::UnloadContent()
 	delete mCube2;
 	delete mPointLight;
 	delete mDirectionalLight;
+	delete mSkybox;
 
 	Mesh::ClearCache();
 	Material::ClearCache();
@@ -250,6 +260,8 @@ void Scene::RenderingScene(float dt)
 	BindCamera();
 	RenderSceneGraph(&mSceneGraph, dt);
 	RenderGUI();
+	glDepthFunc(GL_LEQUAL);
+	mSkybox->RenderSkybox(&mSceneCamera);
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

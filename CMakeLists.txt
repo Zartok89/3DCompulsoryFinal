@@ -60,6 +60,7 @@ core/camera/CameraController.h
 #Graphics Headers
 core/graphics/Material.h
 core/graphics/Mesh.h
+core/graphics/Skybox.h
 core/graphics/Texture.h
 core/graphics/Vertex.h
 
@@ -110,6 +111,7 @@ core/camera/CameraController.cpp
 #Graphics Source
 core/graphics/Material.cpp
 core/graphics/Mesh.cpp
+core/graphics/Skybox.cpp
 core/graphics/Texture.cpp
 
 #Program Source

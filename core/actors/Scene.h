@@ -82,6 +82,5 @@ public:
     class Shader* mShader{ nullptr };
 	PointLight* mPointLight{ nullptr };
     DirectionalLight* mDirectionalLight{ nullptr };
-
-
+    class Skybox* mSkybox{ nullptr };
 };

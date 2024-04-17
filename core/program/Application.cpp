@@ -40,7 +40,7 @@ void Application::Run()
 	InitializingApplication();
     LoadProjectContent();
 
-    float lastFrame = 0.f;
+    float lastFrame = static_cast<float>(glfwGetTime());
 
     while (!mWindow.IsClosed())
     {

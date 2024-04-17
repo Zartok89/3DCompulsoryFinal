@@ -39,7 +39,10 @@ void Mesh::SetupMesh()
 
 void Mesh::DrawMesh(const Shader* shader) const
 {
-	mMaterial->BindMaterialTexture(shader);
+	if (mMaterial)
+	{
+		mMaterial->BindMaterialTexture(shader);
+    }
 
     glBindVertexArray(mVAO);
     glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mIndices.size()), GL_UNSIGNED_INT, 0);
