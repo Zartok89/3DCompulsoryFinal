@@ -30,7 +30,7 @@ public:
 		return nullptr;
 	}
 
-	void BarycentricCollision(class StaticMeshActor* staticMesh) const
+	void BarycentricCollision(class PawnActor* staticMesh) const
 	{
 		std::cout << "Hello! I am function pointer\n";
 		mBarycentricCPtr->getBarycentricCoordinatesActor(staticMesh);
@@ -47,6 +47,6 @@ public:
 	 */
 	BarycentricC* mBarycentricCPtr;
 	AABBcollision* AABBPtr;
-	StaticMeshActor* mStaticMeshPointer;
+	PawnActor* mStaticMeshPointer;
 
 };

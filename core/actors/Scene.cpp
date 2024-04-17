@@ -9,6 +9,7 @@
 #include "Interfaces/RenderInterface.h"
 #include "actors/Actor.h"
 #include "graphics/Skybox.h"
+#include "utility/AssimpLoader.h"
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
@@ -18,9 +19,9 @@ Scene::~Scene()
 
 void Scene::MeshActorLoading(Material* mat)
 {
-	mCube0 = new StaticMeshActor("Cube0", Mesh::CreateCube(mat));
-	mCube1 = new StaticMeshActor("Cube1", Mesh::CreateCube(mat));
-	mCube2 = new StaticMeshActor("Cube2", Mesh::CreateCube(mat));
+	mCube0 = new StaticMeshActor("Cube0");
+	mCube1 = new PawnActor("Cube1", Mesh::CreateCube(mat));
+	mCube2Player = new PawnActor("mCube2Player", Mesh::CreateCube(mat));
 	mSkybox = new Skybox({
 		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_left.png",
 		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_right.png",
@@ -29,6 +30,8 @@ void Scene::MeshActorLoading(Material* mat)
 		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_front.png",
 		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_back.png",
 		});
+	mStaticMeshActor0 = new StaticMeshActor("mStaticMeshActor0");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "assets/models/Horse.fbx", mStaticMeshActor0);
 }
 
 void Scene::LightingActorLoading()
@@ -42,22 +45,24 @@ void Scene::ActorHierarchyLoading()
 	mSceneGraph.AddChild(&mSceneCamera);
 	mSceneGraph.AddChild(mCube0);
 	mCube0->AddChild(mCube1);
-	mSceneGraph.AddChild(mCube2);
+	mSceneGraph.AddChild(mCube2Player);
 	mSceneGraph.AddChild(mDirectionalLight);
+	mSceneGraph.AddChild(mPointLight);
+	mSceneGraph.AddChild(mStaticMeshActor0);
 }
 
 void Scene::ActorPositionCollisionLoading()
 {
 	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
-	mCube0->ChooseCollisionType(2);
+	mCube2Player->ChooseCollisionType(2);
 	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
 }
 
 void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetPosition({ 0.f, 0.f, 10.f });
-	mActorController = std::make_shared<ActorController>(mCube0);
+	mActorController = std::make_shared<ActorController>(mCube2Player);
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
 	mCurrentController = mCameraController;
 }
@@ -92,12 +97,21 @@ void Scene::UnloadContent()
 	LOG_INFO("Scene::UnloadContent");
 
 	delete mShader;
+	mShader = nullptr;
 	delete mCube0;
+	mCube0 = nullptr;
 	delete mCube1;
-	delete mCube2;
+	mCube1 = nullptr;
+	delete mCube2Player;
+	mCube2Player = nullptr;
 	delete mPointLight;
+	mPointLight = nullptr;
 	delete mDirectionalLight;
+	mDirectionalLight = nullptr;
 	delete mSkybox;
+	mSkybox = nullptr;
+	delete mStaticMeshActor0;
+	mStaticMeshActor0 = nullptr;
 
 	Mesh::ClearCache();
 	Material::ClearCache();
@@ -206,15 +220,59 @@ void Scene::HandleCollision()
 	//		IBounded* iA = dynamic_cast<IBounded*>(actors[i]);
 	//		IBounded* iB = dynamic_cast<IBounded*>(actors[j]);
 
+	//		// Skip intersection if a object ignores collision
+	//		if (iA->GetCollisionProperties().IsIgnoreResponse() ||
+	//			iB->GetCollisionProperties().IsIgnoreResponse())
+	//		{
+	//			continue;
+	//		}
+
+	//		// Skip intersection checks for two static objects
+	//		if (iA->GetCollisionProperties().IsStatic() &&
+	//			iB->GetCollisionProperties().IsStatic())
+	//		{ 
+	//			continue;
+	//		}
+
 	//		auto a = iA->GetAABB();
 	//		auto b = iB->GetAABB();
 
 	//		glm::vec3 mtv{}; // minimum translation vector to resolve the collision		
 	//		if (a.Intersect(b, &mtv)) // This means that the two bounding boxes intersect
 	//		{
-	//			// Move both actors equally at opposite sides by halfing the mtv vector
-	//			actors[i]->SetPosition(actors[i]->GetGlobalPosition() - mtv * 0.5f);
-	//			actors[j]->SetPosition(actors[j]->GetGlobalPosition() + mtv * 0.5f);
+	//			// Determine how to apply the MTV based on the collision responses of the actors
+	//			bool isADynamic = iA->GetCollisionProperties().IsDynamic();
+	//			bool isBDynamic = iB->GetCollisionProperties().IsDynamic();
+
+	//			glm::vec3 mtvA(0.f), mtvB(0.f); // Initialize MTV adjustments
+
+	//			if (isADynamic && isBDynamic)
+	//			{
+	//				// If both actors are dynamic, split the MTV between them
+	//				mtvA = -mtv * 0.5f;
+	//				mtvB = mtv * 0.5f;
+	//			}
+	//			else if (isADynamic)
+	//			{
+	//				// If only actor A is dynamic, apply the full MTV to A
+	//				mtvA = -mtv;
+	//			}
+	//			else if (isBDynamic)
+	//			{
+	//				// If only actor B is dynamic, apply the full MTV to B
+	//				mtvB = mtv;
+	//			}
+	//			// No adjustment for static objects
+
+	//			// Apply MTV adjustments
+	//			if (isADynamic)
+	//			{
+	//				actors[i]->SetWorldPosition(actors[i]->GetWorldPosition() + mtvA);
+	//			}
+	//			if (isBDynamic)
+	//			{
+	//				actors[j]->SetWorldPosition(actors[j]->GetWorldPosition() + mtvB);
+	//			}
 	//		}
 	//	}
 	//}

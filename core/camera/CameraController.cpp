@@ -75,7 +75,6 @@ void CameraController::UpdateCurrentController(float dt)
 {
     auto acceleration = mCamera->GetAcceleration();
     float movementSpeed = mCamera->GetAccelerationSpeed();
-
     acceleration = glm::vec3(0.f);
 
     if (mKeyStates[GLFW_KEY_W]) acceleration.z += movementSpeed;
@@ -84,6 +83,8 @@ void CameraController::UpdateCurrentController(float dt)
     if (mKeyStates[GLFW_KEY_D]) acceleration.x += movementSpeed;
     if (mKeyStates[GLFW_KEY_E]) acceleration.y += movementSpeed;
     if (mKeyStates[GLFW_KEY_Q]) acceleration.y -= movementSpeed;
+    if (mKeyStates[GLFW_KEY_LEFT_SHIFT]) mCamera->SetAccelerationSpeed(200.f);
+    else if (!mKeyStates[GLFW_KEY_LEFT_SHIFT]) mCamera->SetAccelerationSpeed(20.f);
 
     mCamera->SetAcceleration(acceleration);
 }

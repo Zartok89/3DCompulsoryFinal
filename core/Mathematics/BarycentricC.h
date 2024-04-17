@@ -11,8 +11,8 @@
 #include <algorithm>
 
 ///Includes
-#include "actors/StaticMeshActor.h"
-#include "actors/StaticMeshActor.h"
+#include "actors/PawnActor.h"
+#include "actors/PawnActor.h"
 #include "graphics/Mesh.h"
 #include "utility/Logger.h"
 
@@ -39,7 +39,7 @@ public:
 		return (A * B * C) / 3.f;
 	}
 
-	void getBarycentricCoordinatesActor(class StaticMeshActor* mesh)
+	void getBarycentricCoordinatesActor(class PawnActor* mesh)
 	{
 		//Itterating over n-elements as the same size as mIndices.
 		//After three iterations the function skips by three

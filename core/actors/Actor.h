@@ -45,7 +45,8 @@ public:
 	 * Setting the actor transforms by using set operations
 	 */
     void SetTransform(const Transform& transform) { mTransform = transform; } // Setting the actor transform
-    void SetPosition(const glm::vec3& position, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the position of the actor in either local or world space
+    void SetLocalTransformMatrix(const glm::mat4& transformMatrix) { mTransform.SetTransformMatrix(transformMatrix); }
+	void SetPosition(const glm::vec3& position, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the position of the actor in either local or world space
     void SetRotation(const glm::quat& rotation, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the rotation of the actor in either local or world space
     void SetScale(const glm::vec3& scale, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the scale of the actor in either local or world space
 

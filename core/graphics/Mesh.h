@@ -22,6 +22,12 @@ public:
     static void ClearCache(); // Clearing the cache
 
     /*
+     * Getting and setting mesh material
+     */
+	void SetMeshMaterial(Material* material) { mMaterial = material; }
+    const Material* GetMeshMaterial() const { return mMaterial; }
+
+    /*
      * Test functions
      */
     static Mesh* CreateCube(Material* material);

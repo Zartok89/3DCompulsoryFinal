@@ -3,6 +3,7 @@
 #include <string>
 
 #include "ActorController.h"
+#include "PawnActor.h"
 #include "StaticMeshActor.h"
 #include "actors/SceneGraph.h"
 #include "camera/Camera.h"
@@ -77,10 +78,13 @@ public:
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
 	StaticMeshActor* mCube0{nullptr};
-    StaticMeshActor* mCube1{nullptr};
-    StaticMeshActor* mCube2{nullptr};
+    PawnActor* mCube1{nullptr};
+    PawnActor* mCube2Player{nullptr};
+    StaticMeshActor* mStaticMeshActor0{nullptr};
+
     class Shader* mShader{ nullptr };
-	PointLight* mPointLight{ nullptr };
-    DirectionalLight* mDirectionalLight{ nullptr };
     class Skybox* mSkybox{ nullptr };
+
+	PointLight* mPointLight{ nullptr };
+	DirectionalLight* mDirectionalLight{ nullptr };
 };
