@@ -31,7 +31,7 @@ void Scene::MeshActorLoading(Material* mat)
 		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_back.png",
 		});
 	mStaticMeshActor0 = new StaticMeshActor("mStaticMeshActor0");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "assets/models/Horse.fbx", mStaticMeshActor0);
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", mStaticMeshActor0);
 }
 
 void Scene::LightingActorLoading()
@@ -58,6 +58,7 @@ void Scene::ActorPositionCollisionLoading()
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mStaticMeshActor0->SetScale(glm::vec3(0.005f));
 	mStaticMeshActor0->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	mStaticMeshActor0->SetPosition({0.f, 0.f, 5.f}, Actor::TransformSpace::Global);
 	mCube2Player->ChooseCollisionType(2);
 	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
 }

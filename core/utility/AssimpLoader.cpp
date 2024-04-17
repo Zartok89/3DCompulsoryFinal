@@ -89,6 +89,10 @@ void AssimpLoader::ProcessNode(const aiScene* scene, aiNode* node, Actor* parent
         std::string meshName = mesh->mName.C_Str();
         std::string actorName = modelName + "_" + meshName + std::to_string(msNameIndex++);
 
+
+
+
+
 /*        if (HasCollisionPrefix(mesh->mName.C_Str(), collisionPrefix))
         {
             LOG_INFO("AssimpLoader::ProcessNode::CollisionPrefix: %s", collisionPrefix.c_str());
@@ -222,7 +226,7 @@ Material* AssimpLoader::ProcessMaterial(aiMaterial* material)
         aiString str;
         material->GetTexture(aiTextureType_OPACITY, 0, &str);
         std::string texturePath = GetDirectoryPath(msBasePath) + "textures/" + std::string(str.C_Str());
-        internalMaterial->SetTexture(Material::ALPHA, Texture::Load(texturePath));
+        internalMaterial->SetTexture(Material::OPACITY, Texture::Load(texturePath));
         LOG_INFO("AssimpLoader::ProcessMaterial::Texture::Opacity::Path: %s", texturePath.c_str());
     }
 

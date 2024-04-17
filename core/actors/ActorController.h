@@ -19,6 +19,7 @@ public:
 	/*
 	* Member variables
 	*/
+	float mMovementSpeed;
 	class Actor* mActor;
 	std::map<int, bool> mKeyStates;
 };
