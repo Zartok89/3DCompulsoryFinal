@@ -81,6 +81,7 @@ public:
     PawnActor* mCube1{nullptr};
     PawnActor* mCube2Player{nullptr};
     StaticMeshActor* mStaticMeshActor0{nullptr};
+    StaticMeshActor* mStaticMeshActor1{nullptr};
 
     class Shader* mShader{ nullptr };
     class Skybox* mSkybox{ nullptr };
