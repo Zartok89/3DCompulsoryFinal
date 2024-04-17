@@ -7,6 +7,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 
+#include "utility/Defines.h"
+
 std::unordered_map<std::string, Texture*> Texture::mCache;
 
 Texture::Texture(const std::string& path) : mId(0), mPath(path)
@@ -81,4 +83,14 @@ void Texture::ClearCache()
         delete it.second;
     }
     mCache.clear();
+}
+
+Texture* Texture::LoadWhiteTexture()
+{
+    return Load(SOURCE_DIRECTORY + "assets/textures/WhiteTexture.jpg");
+}
+
+Texture* Texture::LoadBlackTexture()
+{
+    return Load(SOURCE_DIRECTORY + "assets/textures/BlackTexture.jpg");
 }

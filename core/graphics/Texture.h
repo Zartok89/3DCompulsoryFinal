@@ -22,7 +22,9 @@ public:
     void LoadTexture(); // Loading the texture image and binding the texture
     static Texture* Load(const std::string& path); // Loading the texture into the cache
     static void Unload(const std::string& path); // Deleting the cache
-    static void ClearCache(); // Clearing the content of the mCache 
+    static void ClearCache(); // Clearing the content of the mCache
+	static Texture* LoadWhiteTexture();
+    static Texture* LoadBlackTexture();
     
     TextureID GetTextureID() const { return mId; } // Recieving the texture ID
     bool IsValid() const { return mId == 0; } // Checking if the texture is valid

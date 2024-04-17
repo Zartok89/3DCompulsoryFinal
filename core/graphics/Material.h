@@ -15,7 +15,7 @@ public:
 	 */
 	enum TextureType
 	{
-		ALBEDO, // Base color
+		//ALBEDO, // Base color
 		NORMAL, // Direction and hight information
 		DIFFUSE, // Even light spread
 		SPECULAR, // Light spread at an angle
@@ -25,12 +25,12 @@ public:
 
 	// Setting default names for the different texture types
 	std::array<std::string, static_cast<size_t>(TextureType::AMOUNTOFTEXTURES)> textureDefaultNames =
-	{ "material.albedoMap",  "material.normalMap", "material.diffuseMap","material.specularMap", "material.alphaMap" };
+	{ "material.diffuseMap", "material.specularMap", "material.normalMap", "material.alphaMap"};
 
     // Material properties which can be affected by the textures
     struct MaterialProperties
     {
-        glm::vec3 mColor {1.f, 1.f, 1.f};
+        //glm::vec3 mColor {1.f, 1.f, 1.f};
     	glm::vec3 mAmbient{ 1.f, 1.f, 1.f };
         glm::vec3 mDiffuse{1.f, 1.f, 1.f};
         glm::vec3 mSpecular{ 1.f, 1.f, 1.f };

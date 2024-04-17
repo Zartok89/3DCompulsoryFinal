@@ -19,7 +19,7 @@ Scene::~Scene()
 
 void Scene::MeshActorLoading(Material* mat)
 {
-	mCube0 = new StaticMeshActor("Cube0");
+	mCube0 = new PawnActor("Cube0", Mesh::CreateCube(mat));
 	mCube1 = new PawnActor("Cube1", Mesh::CreateCube(mat));
 	mCube2Player = new PawnActor("mCube2Player", Mesh::CreateCube(mat));
 	mSkybox = new Skybox({
@@ -36,8 +36,8 @@ void Scene::MeshActorLoading(Material* mat)
 
 void Scene::LightingActorLoading()
 {
-	mPointLight = new PointLight("Point light 0");
 	mDirectionalLight = new DirectionalLight("Directional light");
+	mPointLight = new PointLight("Point light 0");
 }
 
 void Scene::ActorHierarchyLoading()
@@ -46,15 +46,18 @@ void Scene::ActorHierarchyLoading()
 	mSceneGraph.AddChild(mCube0);
 	mCube0->AddChild(mCube1);
 	mSceneGraph.AddChild(mCube2Player);
-	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mPointLight);
+	mCube2Player->AddChild(mPointLight);
 	mSceneGraph.AddChild(mStaticMeshActor0);
+	mSceneGraph.AddChild(mDirectionalLight);
 }
 
 void Scene::ActorPositionCollisionLoading()
 {
 	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
+	mStaticMeshActor0->SetScale(glm::vec3(0.005f));
+	mStaticMeshActor0->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
 	mCube2Player->ChooseCollisionType(2);
 	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
 }
@@ -62,7 +65,7 @@ void Scene::ActorPositionCollisionLoading()
 void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetPosition({ 0.f, 0.f, 10.f });
-	mActorController = std::make_shared<ActorController>(mCube2Player);
+	mActorController = std::make_shared<ActorController>(mStaticMeshActor0);
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
 	mCurrentController = mCameraController;
 }
@@ -313,8 +316,8 @@ void Scene::RenderingScene(float dt)
 	mShader->use();
 
 	// Bind
-	BindDirectionalLight();
 	BindPointLights();
+	BindDirectionalLight();
 	BindCamera();
 	RenderSceneGraph(&mSceneGraph, dt);
 	RenderGUI();

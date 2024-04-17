@@ -89,18 +89,18 @@ void AssimpLoader::ProcessNode(const aiScene* scene, aiNode* node, Actor* parent
         std::string meshName = mesh->mName.C_Str();
         std::string actorName = modelName + "_" + meshName + std::to_string(msNameIndex++);
 
-       /* if (HasCollisionPrefix(mesh->mName.C_Str(), collisionPrefix))
+/*        if (HasCollisionPrefix(mesh->mName.C_Str(), collisionPrefix))
         {
             LOG_INFO("AssimpLoader::ProcessNode::CollisionPrefix: %s", collisionPrefix.c_str());
             AABB aabb = ProcessCollisionAABB(mesh);
             actor = new AABBActor(actorName, aabb);
         }
-        else if (HasLightPrefix(mesh->mName.C_Str(), lightPrefix))
+        else */if (HasLightPrefix(mesh->mName.C_Str(), lightPrefix))
         {
             LOG_INFO("AssimpLoader::ProcessNode::LightPrefix: %s", lightPrefix.c_str());
         }
         else
-        {*/
+        {
             LOG_INFO("AssimpLoader::ProcessMesh::Name: %s", mesh->mName.C_Str());
             Mesh* internalMesh = ProcessMesh(mesh);
 
@@ -117,7 +117,7 @@ void AssimpLoader::ProcessNode(const aiScene* scene, aiNode* node, Actor* parent
             // Set the collision properties for the actor to ignore. This should be set to BLOCK when culling the scene in a different collision channel.
             //meshActor->mCollisionProperties.mResponse = CollisionResponse::IGNORE;
             actor = meshActor;
-        //}
+        }
     }
 
     if (!actor)
@@ -186,8 +186,8 @@ Material* AssimpLoader::ProcessMaterial(aiMaterial* material)
 {
     // Creates a new material and a default white and black texture set to diffuse and specular.
     Material* internalMaterial = Material::Load(std::string(material->GetName().C_Str()), {}, {});
-    //internalMaterial->SetTexture(Material::DIFFUSE, Texture::LoadWhiteTexture());
-    //internalMaterial->SetTexture(Material::SPECULAR, Texture::LoadBlackTexture());
+    internalMaterial->SetTexture(Material::DIFFUSE, Texture::LoadWhiteTexture());
+    internalMaterial->SetTexture(Material::SPECULAR, Texture::LoadBlackTexture());
 
     // Diffuse
     if (0 < material->GetTextureCount(aiTextureType_DIFFUSE))

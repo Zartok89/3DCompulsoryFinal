@@ -2,7 +2,7 @@
 
 // Render output
 out vec4 FragColor;
-  
+
 // Defines
 #define MAX_POINT_LIGHTS 64
 
@@ -14,7 +14,6 @@ in vec3 FragPos;
 // Structs
 struct Material
 {
-    sampler2D albedoMap;
     sampler2D diffuseMap;
     sampler2D specularMap;
     vec3 diffuseColor;
@@ -23,7 +22,6 @@ struct Material
 
 struct DirectionalLight
 {
-    sampler2D albedoMap;
     vec3 ambient;
     vec3 color;
     vec3 direction;
@@ -48,6 +46,7 @@ uniform PointLight pointLights[MAX_POINT_LIGHTS];
 
 uniform vec3 viewPos;
 
+// Lots of optimizations can be done here
 vec3 CalculateDirectionalLightContribution()
 {   
     vec3 lightDir = normalize(dl.direction);
@@ -67,6 +66,7 @@ vec3 CalculateDirectionalLightContribution()
     return ambientContribution + diffuseContribution + specularContribution;
 }
 
+// Lots of optimizations can be done here
 vec3 CalculatePointLightContribution()
 {      
     vec3 materialDiffuseColor = vec3(texture(material.diffuseMap, TexCoord)) * material.diffuseColor;
@@ -98,8 +98,9 @@ vec3 CalculatePointLightContribution()
 
 void main()
 {
-    if (texture(material.diffuseMap, TexCoord).a < 0.5) { discard; }
-    FragColor = texture(material.albedoMap, TexCoord);    
+    if (texture(material.diffuseMap, TexCoord).a < 0.5)
+        discard;
+
     vec3 directionalLightContribution = CalculateDirectionalLightContribution();
     vec3 pointLightsContribution = CalculatePointLightContribution();
     vec3 finalColor = pointLightsContribution + directionalLightContribution;

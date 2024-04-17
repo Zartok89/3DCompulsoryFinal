@@ -77,7 +77,7 @@ public:
      */
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
-	StaticMeshActor* mCube0{nullptr};
+	PawnActor* mCube0{nullptr};
     PawnActor* mCube1{nullptr};
     PawnActor* mCube2Player{nullptr};
     StaticMeshActor* mStaticMeshActor0{nullptr};
