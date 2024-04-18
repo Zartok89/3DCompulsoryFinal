@@ -77,15 +77,20 @@ public:
      */
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
-	PawnActor* mCube0{nullptr};
     PawnActor* mCube1{nullptr};
     PawnActor* mCube2Player{nullptr};
-    StaticMeshActor* mStaticMeshActor0{nullptr};
-    StaticMeshActor* mStaticMeshActor1{nullptr};
 
     class Shader* mShader{ nullptr };
     class Skybox* mSkybox{ nullptr };
 
 	PointLight* mPointLight{ nullptr };
 	DirectionalLight* mDirectionalLight{ nullptr };
+	DirectionalLight* mDirectionalLightGrass{ nullptr };
+
+    //------Scene 1: The Barn------//
+    PawnActor* mSMAPlayer{nullptr};
+    StaticMeshActor* mSMABarn{nullptr};
+    StaticMeshActor* mSMABarnDoor{nullptr};
+    StaticMeshActor* mSMAGrassField{nullptr};
+    
 };

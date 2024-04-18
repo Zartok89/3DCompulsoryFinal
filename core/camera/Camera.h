@@ -14,7 +14,7 @@ public:
         glm::quat rotation = glm::quat(glm::identity<glm::quat>()),
         float aspectRatio = 1280.f / 720.f,
         float nearPlane = 0.1f,
-        float farPlane = 100.0f,
+        float farPlane = 500.0f,
         float fieldOfView = 45.0f,
         float maxMovementSeed = 40.f,
         float accelerationSpeed = 20.0f,

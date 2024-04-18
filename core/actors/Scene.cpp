@@ -19,61 +19,68 @@ Scene::~Scene()
 
 void Scene::MeshActorLoading(Material* mat)
 {
-	mCube0 = new PawnActor("Cube0", Mesh::CreateCube(mat));
 	mCube1 = new PawnActor("Cube1", Mesh::CreateCube(mat));
 	mCube2Player = new PawnActor("mCube2Player", Mesh::CreateCube(mat));
 	mSkybox = new Skybox({
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_left.png",
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_right.png",
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_up.png",
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_down.png",
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_front.png",
-		SOURCE_DIRECTORY + "assets/textures/skybox/Starfield_And_Haze_back.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Right.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Left.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Top.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Bottom.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Front.png",
+		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Back.png",
 		});
-	mStaticMeshActor0 = new StaticMeshActor("mStaticMeshActor0");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", mStaticMeshActor0);
-	mStaticMeshActor1 = new StaticMeshActor("mStaticMeshActor1");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", mStaticMeshActor1);
+	mSMAPlayer = new PawnActor("mStaticMeshActor0", Mesh::CreateCube(mat));
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", mSMAPlayer);
+	mSMABarn = new StaticMeshActor("mSMABarn");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", mSMABarn);
+	mSMABarnDoor = new StaticMeshActor("mSMABarnDoor");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
+	mSMAGrassField = new StaticMeshActor("mSMAGrassField");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
 }
 
 void Scene::LightingActorLoading()
 {
+	//mPointLight = new PointLight("Point light 0");
 	mDirectionalLight = new DirectionalLight("Directional light");
-	mPointLight = new PointLight("Point light 0");
+	mDirectionalLightGrass = new DirectionalLight("mDirectionalLightGrass");
 }
 
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
-	mSceneGraph.AddChild(mCube0);
-	mCube0->AddChild(mCube1);
 	mSceneGraph.AddChild(mCube2Player);
 	mSceneGraph.AddChild(mPointLight);
-	mCube2Player->AddChild(mPointLight);
-	mSceneGraph.AddChild(mStaticMeshActor0);
-	mSceneGraph.AddChild(mStaticMeshActor1);
+	mSceneGraph.AddChild(mSMAPlayer);
+	mSceneGraph.AddChild(mSMABarn);
+	mSceneGraph.AddChild(mSMABarnDoor);
+	mSceneGraph.AddChild(mSMAGrassField);
+	mSMABarn->AddChild(mPointLight);
+	mSMABarn->AddChild(mSMABarnDoor);
 	mSceneGraph.AddChild(mDirectionalLight);
 }
 
 void Scene::ActorPositionCollisionLoading()
 {
-	mCube0->SetPosition({ -2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube1->SetPosition({ 2.f, 0.f, 0.f }, Actor::TransformSpace::Global);
 	mCube2Player->SetPosition({ 0.f, 0.f, -5.f }, Actor::TransformSpace::Global);
-	mStaticMeshActor0->SetScale(glm::vec3(0.005f));
-	mStaticMeshActor1->SetScale(glm::vec3(0.005f));
-	mStaticMeshActor0->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mStaticMeshActor1->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mStaticMeshActor0->SetPosition({0.f, 0.f, 5.f}, Actor::TransformSpace::Global);
-	mStaticMeshActor1->SetPosition({0.f, 0.f, 0.f}, Actor::TransformSpace::Global);
+	mSMAPlayer->SetScale(glm::vec3(0.005f));
+	mSMABarn->SetScale(glm::vec3(0.005f));
+	mSMAGrassField->SetScale(glm::vec3(0.005f));
+	mSMAPlayer->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	mSMABarn->SetRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	mSMAPlayer->SetPosition({0.f, 0.f, 10.f}, Actor::TransformSpace::Global);
+	mSMABarn->SetPosition({0.f, 0.f, 0.f}, Actor::TransformSpace::Global);
 	mCube2Player->ChooseCollisionType(2);
 	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
+	mDirectionalLight->SetPosition(glm::vec3(0.f, 100.f, 0.f));
+	mSMABarnDoor->SetPosition(glm::vec3(200.f, 0.f, 0.f));
 }
 
 void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetPosition({ 0.f, 0.f, 10.f });
-	mActorController = std::make_shared<ActorController>(mStaticMeshActor0);
+	mActorController = std::make_shared<ActorController>(mSMAPlayer);
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
 	mCurrentController = mCameraController;
 }
@@ -109,8 +116,6 @@ void Scene::UnloadContent()
 
 	delete mShader;
 	mShader = nullptr;
-	delete mCube0;
-	mCube0 = nullptr;
 	delete mCube1;
 	mCube1 = nullptr;
 	delete mCube2Player;
@@ -121,10 +126,10 @@ void Scene::UnloadContent()
 	mDirectionalLight = nullptr;
 	delete mSkybox;
 	mSkybox = nullptr;
-	delete mStaticMeshActor0;
-	mStaticMeshActor0 = nullptr;
-	delete mStaticMeshActor1;
-	mStaticMeshActor1 = nullptr;
+	delete mSMAPlayer;
+	mSMAPlayer = nullptr;
+	delete mSMABarn;
+	mSMABarn = nullptr;
 
 	Mesh::ClearCache();
 	Material::ClearCache();
@@ -326,8 +331,8 @@ void Scene::RenderingScene(float dt)
 	mShader->use();
 
 	// Bind
-	BindPointLights();
 	BindDirectionalLight();
+	BindPointLights();
 	BindCamera();
 	RenderSceneGraph(&mSceneGraph, dt);
 	RenderGUI();

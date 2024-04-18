@@ -15,8 +15,7 @@ public:
 	 */
 	enum TextureType
 	{
-		//ALBEDO, // Base color
-		DIFFUSE, // Even light spread
+		DIFFUSE, // Base color with even light spread
 		SPECULAR, // Light spread at an angle
 		NORMAL, // Direction and hight information
 		OPACITY, // Sets the opacity
