@@ -62,7 +62,7 @@ core/actors/Actor.h
 core/actors/ActorController.h
 core/actors/Scene.h
 core/actors/SceneGraph.h
-core/actors/PawnActor.h
+core/actors/MeshActor.h
 
 #Camera Headers
 core/camera/Camera.h
@@ -116,7 +116,7 @@ set (SRC_FILES
 core/actors/Actor.cpp
 core/actors/ActorController.cpp
 core/actors/Scene.cpp
-core/actors/PawnActor.cpp
+core/actors/MeshActor.cpp
 
 #Camera Source
 core/camera/Camera.cpp

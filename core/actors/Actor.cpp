@@ -46,65 +46,44 @@ void Actor::RemoveChild(Actor* child)
     }
 }
 
-void Actor::SetPosition(const glm::vec3& position, Actor::TransformSpace type)
+void Actor::SetGlobalPosition(const glm::vec3& position)
 {
-	if (type == TransformSpace::Local)
+    if (mParent) 
     {
-        mTransform.SetPosition(position);
+        glm::mat4 parentGlobalInverse = glm::inverse(mParent->GetGlobalTransformMatrix());
+        glm::vec4 localPosition = parentGlobalInverse * glm::vec4(position, 1.0f);
+        mTransform.SetPosition(glm::vec3(localPosition));
     }
-    else if (type == TransformSpace::Global)
-    {
-        if (mParent) 
-        {
-            glm::mat4 parentGlobalInverse = glm::inverse(mParent->GetGlobalTransformMatrix());
-            glm::vec4 localPosition = parentGlobalInverse * glm::vec4(position, 1.0f);
-            mTransform.SetPosition(glm::vec3(localPosition));
-        }
-        else {
-            mTransform.SetPosition(position);
-        }
+    else {
+        mTransform.SetPosition(position);
     }
 }
 
-void Actor::SetRotation(const glm::quat& rotation, Actor::TransformSpace type)
+void Actor::SetGlobalRotation(const glm::quat& rotation)
 {
-    if (type == TransformSpace::Local) 
+    if (mParent) 
+    {
+        glm::quat parentGlobalRotationInverse = glm::inverse(glm::quat_cast(mParent->GetGlobalTransformMatrix()));
+        glm::quat localRotation = parentGlobalRotationInverse * rotation;
+        mTransform.SetRotation(localRotation);
+    }
+    else 
     {
         mTransform.SetRotation(rotation);
     }
-    else if (type == TransformSpace::Global) 
-    {
-        if (mParent) 
-        {
-            glm::quat parentGlobalRotationInverse = glm::inverse(glm::quat_cast(mParent->GetGlobalTransformMatrix()));
-            glm::quat localRotation = parentGlobalRotationInverse * rotation;
-            mTransform.SetRotation(localRotation);
-        }
-        else 
-        {
-            mTransform.SetRotation(rotation);
-        }
-    }
 }
 
-void Actor::SetScale(const glm::vec3& scale, Actor::TransformSpace type)
+void Actor::SetGlobalScale(const glm::vec3& scale)
 {
-	if (type == TransformSpace::Local) 
+	if (mParent) 
+    {
+        glm::vec3 parentGlobalScale = mParent->GetGlobalScale();
+        glm::vec3 relativeScale = scale / parentGlobalScale;
+        mTransform.SetScale(relativeScale);
+    }
+    else 
     {
         mTransform.SetScale(scale);
-    }
-    else if (type == TransformSpace::Global) 
-    {
-    if (mParent) 
-        {
-            glm::vec3 parentGlobalScale = mParent->GetGlobalScale();
-            glm::vec3 relativeScale = scale / parentGlobalScale;
-            mTransform.SetScale(relativeScale);
-        }
-        else 
-        {
-            mTransform.SetScale(scale);
-        }
     }
 }
 

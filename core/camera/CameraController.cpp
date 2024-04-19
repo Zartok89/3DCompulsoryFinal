@@ -29,7 +29,7 @@ void CameraController::HandleMouseMovement(Window* window, double xpos, double y
     glm::quat pitchRotation = glm::angleAxis(pitchRad, glm::vec3(1.0f, 0.0f, 0.0f));
     glm::quat newOrientation = yawRotation * currentOrientation * pitchRotation;
     newOrientation = glm::normalize(newOrientation);
-    mCamera->SetRotation(newOrientation);
+    mCamera->SetLocalRotation(newOrientation);
 }
 
 void CameraController::HandleMouseButton(Window* window, int button, int action, int mods)

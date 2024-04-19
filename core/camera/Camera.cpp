@@ -20,8 +20,8 @@ Camera::Camera(
     mNearPlane = nearPlane;
     mFarPlane = farPlane;
     mFieldOfView = fieldOfView;
-    SetPosition(position);
-    SetRotation(rotation);
+    SetLocalPosition(position);
+    SetLocalRotation(rotation);
     UpdateProjectionMatrix();
 }
 
@@ -94,7 +94,7 @@ void Camera::UpdatePosition(float dt)
     glm::vec3 right = glm::normalize(glm::cross(front, glm::vec3(0.0f, 1.0f, 0.0f)));
     glm::vec3 up = glm::cross(right, front);
 
-    SetPosition(GetLocalPosition() + mVelocity.x * dt * right + mVelocity.y * dt * up + mVelocity.z * dt * front);
+    SetLocalPosition(GetLocalPosition() + mVelocity.x * dt * right + mVelocity.y * dt * up + mVelocity.z * dt * front);
 }
 
 void Camera::UpdateProjectionMatrix()

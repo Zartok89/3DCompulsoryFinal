@@ -3,8 +3,7 @@
 #include <string>
 
 #include "ActorController.h"
-#include "PawnActor.h"
-#include "StaticMeshActor.h"
+#include "MeshActor.h"
 #include "actors/SceneGraph.h"
 #include "camera/Camera.h"
 #include "camera/CameraController.h"
@@ -77,8 +76,8 @@ public:
      */
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
-    PawnActor* mCube1{nullptr};
-    PawnActor* mCube2Player{nullptr};
+    MeshActor* mCube1{nullptr};
+    MeshActor* mCube2{nullptr};
 
     class Shader* mShader{ nullptr };
     class Skybox* mSkybox{ nullptr };
@@ -88,9 +87,9 @@ public:
 	DirectionalLight* mDirectionalLightGrass{ nullptr };
 
     //------Scene 1: The Barn------//
-    PawnActor* mSMAPlayer{nullptr};
-    StaticMeshActor* mSMABarn{nullptr};
-    StaticMeshActor* mSMABarnDoor{nullptr};
-    StaticMeshActor* mSMAGrassField{nullptr};
+    MeshActor* mSMAPlayer{nullptr};
+    MeshActor* mSMABarn{nullptr};
+    MeshActor* mSMABarnDoor{nullptr};
+    MeshActor* mSMAGrassField{nullptr};
     
 };

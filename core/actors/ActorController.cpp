@@ -13,19 +13,19 @@ void ActorController::UpdateCurrentController(float dt)
 {
 	if (mKeyStates[GLFW_KEY_D])
     {
-        mActor->SetPosition(mActor->GetGlobalPosition() + glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
+        mActor->SetLocalPosition(mActor->GetGlobalPosition() + glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
     }
     if (mKeyStates[GLFW_KEY_A])
     {
-        mActor->SetPosition(mActor->GetGlobalPosition() - glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
+        mActor->SetLocalPosition(mActor->GetGlobalPosition() - glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
     }
     if (mKeyStates[GLFW_KEY_W])
     {
-        mActor->SetPosition(mActor->GetGlobalPosition() - glm::vec3(0.f, 0.f, 1.5f * mMovementSpeed) * dt);
+        mActor->SetLocalPosition(mActor->GetGlobalPosition() - glm::vec3(0.f, 0.f, 1.5f * mMovementSpeed) * dt);
     }
     if (mKeyStates[GLFW_KEY_S])
     {
-        mActor->SetPosition(mActor->GetGlobalPosition() + glm::vec3(0.f, 0.f, 1.5f * mMovementSpeed) * dt);
+        mActor->SetLocalPosition(mActor->GetGlobalPosition() + glm::vec3(0.f, 0.f, 1.5f * mMovementSpeed) * dt);
     } 
 }
 

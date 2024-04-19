@@ -8,11 +8,6 @@
 class Actor
 {
 public:
-    enum class TransformSpace 
-    {
-        Local,
-        Global
-    };
 
     /*
      * Constructur, Deconstructor and copy + movers
@@ -44,11 +39,17 @@ public:
 	/*
 	 * Setting the actor transforms by using set operations
 	 */
+    //Local transforms
     void SetTransform(const Transform& transform) { mTransform = transform; } // Setting the actor transform
     void SetLocalTransformMatrix(const glm::mat4& transformMatrix) { mTransform.SetTransformMatrix(transformMatrix); }
-	void SetPosition(const glm::vec3& position, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the position of the actor in either local or world space
-    void SetRotation(const glm::quat& rotation, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the rotation of the actor in either local or world space
-    void SetScale(const glm::vec3& scale, Actor::TransformSpace type = Actor::TransformSpace::Local); // Setting the scale of the actor in either local or world space
+	void SetLocalPosition(const glm::vec3& position) { mTransform.SetPosition(position); } // Setting the position of the actor in either local or world space
+    void SetLocalRotation(const glm::quat& rotation) { mTransform.SetRotation(rotation); } // Setting the rotation of the actor in either local or world space
+    void SetLocalScale(const glm::vec3& scale) { mTransform.SetScale(scale); } // Setting the scale of the actor in either local or world space
+    //Global transforms
+	void SetGlobalPosition(const glm::vec3& position); // Setting the position of the actor in either local or world space
+    void SetGlobalRotation(const glm::quat& rotation); // Setting the rotation of the actor in either local or world space
+    void SetGlobalScale(const glm::vec3& scale); // Setting the scale of the actor in either local or world space
+
 
     /*
      * Getting the transform information of the actor

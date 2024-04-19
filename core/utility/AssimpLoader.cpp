@@ -5,8 +5,7 @@
 #include "graphics/Mesh.h"
 #include <exception>
 
-#include "actors/PawnActor.h"
-#include "actors/StaticMeshActor.h"
+#include "actors/MeshActor.h"
 #include "lighting/PointLight.h"
 
 
@@ -69,7 +68,7 @@ void AssimpLoader::ProcessLights(const aiScene* scene, Actor* actor)
         };
 
         pointLightActor->mColor = glm::clamp(pointLightActor->mColor, 0.f, 1.f);
-        pointLightActor->SetPosition(pos, Actor::TransformSpace::Global);
+        pointLightActor->SetGlobalPosition(pos);
         actor->AddChild(pointLightActor);
     }
 }
@@ -117,7 +116,7 @@ void AssimpLoader::ProcessNode(const aiScene* scene, aiNode* node, Actor* parent
                 internalMesh->SetMeshMaterial(internalMaterial);
             }
 
-            PawnActor* meshActor = new PawnActor(actorName, internalMesh);
+            auto* meshActor = new MeshActor(actorName, internalMesh);
             // Set the collision properties for the actor to ignore. This should be set to BLOCK when culling the scene in a different collision channel.
             //meshActor->mCollisionProperties.mResponse = CollisionResponse::IGNORE;
             actor = meshActor;
