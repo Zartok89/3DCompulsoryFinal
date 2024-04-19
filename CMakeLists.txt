@@ -86,6 +86,7 @@ core/lighting/PointLight.h
 
 #Mathematics Headers
 core/mathematics/BarycentricC.h
+core/mathematics/ParametricCurve.h
 
 #Physics Headers
 core/physics/AABBcollision.h
