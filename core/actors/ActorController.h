@@ -1,11 +1,14 @@
 #pragma once
 #include <map>
+#include "camera/Camera.h"
 #include "Interfaces/ControllerInterface.h"
 
 class ActorController : public IController
 {
 public:
-	ActorController(class Actor* actor); // Constructor
+	ActorController(class Actor* actor, bool bIsCameraAttachedToPlayer, Camera* sceneCamera); // Constructor
+	void MovementNoCameraFollow(float dt);
+	void MovementWithCameraFollow(float dt);
 
 	/*
 	* Virtual Functions from the controllerinterface
@@ -20,6 +23,8 @@ public:
 	* Member variables
 	*/
 	float mMovementSpeed;
-	class Actor* mActor;
+	Actor* mActor;
+	Camera* mCamera;
 	std::map<int, bool> mKeyStates;
+	bool mIsAttachedToPlayer = false;
 };

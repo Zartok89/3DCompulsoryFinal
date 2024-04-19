@@ -28,7 +28,7 @@ public:
     const Material* GetMeshMaterial() const { return mMaterial; }
 
     /*
-     * Test functions
+     * Objects
      */
     static Mesh* CreateCube(Material* material);
 

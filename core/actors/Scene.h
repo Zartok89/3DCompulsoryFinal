@@ -76,8 +76,6 @@ public:
      */
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
-    MeshActor* mCube1{nullptr};
-    MeshActor* mCube2{nullptr};
 
     class Shader* mShader{ nullptr };
     class Skybox* mSkybox{ nullptr };

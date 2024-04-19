@@ -19,8 +19,6 @@ Scene::~Scene()
 
 void Scene::MeshActorLoading(Material* mat)
 {
-	mCube1 = new MeshActor("Cube1", Mesh::CreateCube(mat));
-	mCube2 = new MeshActor("Cube2", Mesh::CreateCube(mat));
 	mSkybox = new Skybox({
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Right.png",
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Left.png",
@@ -49,7 +47,6 @@ void Scene::LightingActorLoading()
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
-	mSceneGraph.AddChild(mCube2);
 	mSceneGraph.AddChild(mPointLight);
 	mSceneGraph.AddChild(mSMAPlayer);
 	mSceneGraph.AddChild(mSMABarn);
@@ -62,8 +59,6 @@ void Scene::ActorHierarchyLoading()
 
 void Scene::ActorPositionCollisionLoading()
 {
-	mCube1->SetGlobalPosition({ 2.f, 0.f, 0.f });
-	mCube2->SetGlobalPosition({ 0.f, 0.f, -5.f });
 	mSMAPlayer->SetLocalScale(glm::vec3(0.005f));
 	mSMABarn->SetLocalScale(glm::vec3(0.005f));
 	mSMAGrassField->SetLocalScale(glm::vec3(0.005f));
@@ -79,9 +74,9 @@ void Scene::ActorPositionCollisionLoading()
 
 void Scene::CameraAndControllerLoading()
 {
-	mSceneCamera.SetLocalPosition({ 0.f, 0.f, 10.f });
-	mActorController = std::make_shared<ActorController>(mSMAPlayer);
+	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
+	mActorController = std::make_shared<ActorController>(mSMAPlayer, false, &mSceneCamera);
 	mCurrentController = mCameraController;
 }
 
@@ -106,8 +101,6 @@ void Scene::LoadContent()
 	ActorHierarchyLoading();
 	ActorPositionCollisionLoading();
 	CameraAndControllerLoading();
-
-
 }
 
 void Scene::UnloadContent()
@@ -116,10 +109,6 @@ void Scene::UnloadContent()
 
 	delete mShader;
 	mShader = nullptr;
-	delete mCube1;
-	mCube1 = nullptr;
-	delete mCube2;
-	mCube2 = nullptr;
 	delete mPointLight;
 	mPointLight = nullptr;
 	delete mDirectionalLight;
@@ -298,10 +287,10 @@ void Scene::HandleCollision()
 
 void Scene::RenderGUI()
 {
-	const char* items[] = { "Camera", "Player" };
+	const char* items[] = { "FreeCamera", "MovePlayer", "MovePlayerWithCamera" };
 	static int item_current = 0; 
 
-	ImGui::Begin("Select controller");
+	ImGui::Begin("Select controller: ");
 
 	// Combo box
 	ImGui::Combo("Select Item", &item_current, items, IM_ARRAYSIZE(items));
@@ -312,6 +301,12 @@ void Scene::RenderGUI()
 	}
 	else if (item_current == 1)
 	{
+		mActorController->mIsAttachedToPlayer = false;
+		mCurrentController = mActorController;
+	}
+	else if (item_current == 2)
+	{
+		mActorController->mIsAttachedToPlayer = true;
 		mCurrentController = mActorController;
 	}
 

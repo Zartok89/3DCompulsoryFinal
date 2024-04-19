@@ -6,7 +6,6 @@
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
-#include <glm/gtx/quaternion.hpp>
 
 void CameraController::HandleMouseMovement(Window* window, double xpos, double ypos)
 {
@@ -53,23 +52,6 @@ void CameraController::HandleMouseButton(Window* window, int button, int action,
         }
     }
 }
-
-//void CameraController::UpdateCameraAcceleration()
-//{
-//    auto acceleration = mCamera->GetAcceleration();
-//    float movementSpeed = mCamera->GetAccelerationSpeed();
-//
-//    acceleration = glm::vec3(0.f);
-//
-//    if (mKeyStates[GLFW_KEY_W]) acceleration.z += movementSpeed;
-//    if (mKeyStates[GLFW_KEY_S]) acceleration.z -= movementSpeed;
-//    if (mKeyStates[GLFW_KEY_A]) acceleration.x -= movementSpeed;
-//    if (mKeyStates[GLFW_KEY_D]) acceleration.x += movementSpeed;
-//    if (mKeyStates[GLFW_KEY_E]) acceleration.y += movementSpeed;
-//    if (mKeyStates[GLFW_KEY_Q]) acceleration.y -= movementSpeed;
-//
-//    mCamera->SetAcceleration(acceleration);
-//}
 
 void CameraController::UpdateCurrentController(float dt)
 {

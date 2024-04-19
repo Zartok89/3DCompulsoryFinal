@@ -13,11 +13,11 @@ public:
     /*
      * Overrides from the Controller Interface to handle input and movement logic for the camera
      */
-    virtual void UpdateCurrentController(float dt) override;
-    virtual void HandleMouseMovement(class Window* window, double xpos, double ypos) override;
-    virtual void HandleMouseScroll(class Window* window, double xoffset, double yoffset) override;
-    virtual void HandleMouseButton(class Window* window, int button, int action, int mods) override;
-    virtual void HandleKeyboard(class Window* window, int key, int scancode, int action, int mods) override;
+    void UpdateCurrentController(float dt) override;
+    void HandleMouseMovement(Window* window, double xpos, double ypos) override;
+    void HandleMouseScroll(Window* window, double xoffset, double yoffset) override;
+    void HandleMouseButton(Window* window, int button, int action, int mods) override;
+    void HandleKeyboard(Window* window, int key, int scancode, int action, int mods) override;
 
     /*
      * Member variables
@@ -26,5 +26,5 @@ public:
     bool mRightMousePressed = false;
     float mMouseSensitivity = 0.1f;
     std::map<int, bool> mKeyStates; // Binding keys to their state to see if its pressed or not
-    class Camera* mCamera;
+    Camera* mCamera;
 };

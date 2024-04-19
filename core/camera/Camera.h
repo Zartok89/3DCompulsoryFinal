@@ -53,12 +53,17 @@ public:
     const glm::mat4& GetProjectionMatrix() const;
     glm::mat4 GetVPMatrix() const;
 
-private:
+    /*
+     * Updating camera parameters
+     */
     void UpdateVelocity(float dt);    
     void UpdatePosition(float dt);
     void UpdateDamping(float dt);
     void UpdateProjectionMatrix();
 
+    /*
+     * Member variables
+     */
     float mMaxMovementSpeed;
     float mAccelerationSpeed;
     float mDampingFactor;
