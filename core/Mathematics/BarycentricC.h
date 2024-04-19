@@ -11,15 +11,18 @@
 #include <algorithm>
 
 ///Includes
-#include "actors/MeshActor.h"
+#include "actors/PawnActor.h"
+#include "actors/StaticMeshActor.h"
 #include "graphics/Mesh.h"
 #include "utility/Logger.h"
 
-class StaticMesh;
+class StaticMeshActor;
+class PawnActor;
+class Mesh;
 
 class BarycentricC
 {
-public:
+
 
 	double determinant(const glm::vec2& u, const glm::vec2& v)
 	{
@@ -38,16 +41,21 @@ public:
 		return (A * B * C) / 3.f;
 	}
 
-	void getBarycentricCoordinatesActor(class PawnActor* mesh)
+public:
+	//BarycentricC(const PawnActor* mesh) {}; 
+
+	void getBarycentricCoordinatesActor(const PawnActor* mesh) 
 	{
 		//Itterating over n-elements as the same size as mIndices.
 		//After three iterations the function skips by three
-		//for (int currentVertex = 0; currentVertex < mesh->mMesh->mIndices.size(); currentVertex+= 3) 
-		//{
-		//	glm::vec2 Q = { mesh->mMesh->mVertices[currentVertex].mPosition.x,mesh->mMesh->mVertices[currentVertex].mPosition.y };
-		//	glm::vec2 P = { mesh->mMesh->mVertices[currentVertex+1].mPosition.x,mesh->mMesh->mVertices[currentVertex+1].mPosition.y };
-		//	glm::vec2 R = { mesh->mMesh->mVertices[currentVertex+2].mPosition.z,mesh->mMesh->mVertices[currentVertex+2].mPosition.y };
 
+		assert(mesh && "PawnActor not in Use");
+		//for (auto currentVertex = 0; currentVertex < mesh->mMesh->mVertices.size(); currentVertex+= 3) 
+		//{
+		//	glm::vec2 Q = { mesh->mMesh->mVertices[currentVertex].mPosition.x,mesh->mMesh->mVertices[currentVertex].mPosition.y }; 
+		//	glm::vec2 P = { mesh->mMesh->mVertices[currentVertex+1].mPosition.y,mesh->mMesh->mVertices[currentVertex+1].mPosition.y }; 
+		//	glm::vec2 R = { mesh->mMesh->mVertices[currentVertex+2].mPosition.z,mesh->mMesh->mVertices[currentVertex+2].mPosition.z }; 
+		//	 
 		//	glm::vec2 X = centroid(Q,P,R); 
 
 		//	double areaQPR = trinagleArea(Q, P, R);
@@ -60,7 +68,7 @@ public:
 		//	mK = 1.f - mI - mK; //i+j+k should be 1  
 
 		//	std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
-		//}
+		//} 
 
 	}
 
