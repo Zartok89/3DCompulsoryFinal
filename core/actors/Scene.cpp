@@ -17,6 +17,41 @@ Scene::~Scene()
 {
 }
 
+#include <random>
+
+void Scene::GeneratePickups(Material* mat)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-10.f, 10.f);
+
+    for (int p = 0; p < mSpawnAmount; p++)
+    {
+        glm::vec3 spawnPos { dis(gen), .5f, dis(gen) };
+        MeshActor* mPickups{nullptr};
+        mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
+        mPickups->SetGlobalPosition(spawnPos);
+		mPickups->SetLocalScale(glm::vec3(0.5f, 1.f, 0.5f));
+        mSceneGraph.AddChild(mPickups);
+        mPickupVector.emplace_back(mPickups);
+    }
+}
+
+void Scene::PickingUpObjects()
+{
+	float pickupRange = 0.5f;
+	for (const auto pickups : mPickupVector)
+	{
+		auto pickupPos = pickups->GetGlobalPosition();
+		auto playerPos = mSMAPlayer->GetGlobalPosition();
+		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) &&
+			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange ))
+		{
+			mSceneGraph.RemoveChild(pickups);
+		}
+	}
+}
+
 void Scene::MeshActorLoading(Material* mat)
 {
 	mSkybox = new Skybox({
@@ -35,6 +70,10 @@ void Scene::MeshActorLoading(Material* mat)
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
 	mSMAGrassField = new MeshActor("mSMAGrassField");
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
+
+	// Spawning pickups
+	mSpawnAmount = 5;
+	GeneratePickups(mat);
 }
 
 void Scene::LightingActorLoading()
@@ -77,6 +116,7 @@ void Scene::CameraAndControllerLoading()
 	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
 	mActorController = std::make_shared<ActorController>(mSMAPlayer, false, &mSceneCamera);
+
 	mCurrentController = mCameraController;
 }
 
@@ -119,6 +159,12 @@ void Scene::UnloadContent()
 	mSMAPlayer = nullptr;
 	delete mSMABarn;
 	mSMABarn = nullptr;
+
+	for (MeshActor* mesh : mPickupVector)
+	{
+		delete mesh;
+		mesh = nullptr;
+	}
 
 	Mesh::ClearCache();
 	Material::ClearCache();
@@ -333,6 +379,7 @@ void Scene::RenderingScene(float dt)
 	RenderGUI();
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
+	PickingUpObjects();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

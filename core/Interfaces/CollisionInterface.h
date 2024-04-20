@@ -5,10 +5,13 @@
 #include "mathematics/BarycentricC.h"
 #include "physics/AABBcollision.h"
 
-class BarycentricC;
 class ICollision
 {
 public:
+	virtual ~ICollision() = default;
+
+	virtual AABBcollision GetAABB() const = 0;
+
 	// Creating a empty function pointer
 	using FunctionPtr = void (*)();
 
@@ -38,15 +41,15 @@ public:
 
 	void AABB(const glm::vec3& center, const glm::vec3& extent, glm::vec3* mtv)
 	{
-		AABBcollision(center, extent);
-		AABBPtr->Intersect(AABBcollision(center, extent), mtv);
+		//AABBcollision(center, extent);
+		//AABBPtr->Intersect(AABBcollision(center, extent), mtv);
 	}
 
 	/*
 	 * Pointers to other classes
 	 */
 	BarycentricC* mBarycentricCPtr;
-	AABBcollision* AABBPtr;
+	//AABBcollision* AABBPtr;
 	PawnActor* mStaticMeshPointer;
 
 };

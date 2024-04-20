@@ -6,7 +6,7 @@
 ActorController::ActorController(Actor* actor, bool bIsCameraAttachedToPlayer, Camera* sceneCamera)
 {
 	mActor = actor;
-    mMovementSpeed = 2.f;
+    mMovementSpeed = 5.f;
     mIsAttachedToPlayer = bIsCameraAttachedToPlayer;
 	mCamera = sceneCamera;
 }
@@ -45,7 +45,6 @@ void ActorController::MovementWithCameraFollow(float dt)
 		mActor->SetLocalPosition(mActor->GetGlobalPosition() + glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
 		acceleration.x += movementSpeed;
 		mCamera->SetAcceleration(acceleration);
-		
 	}
 	if (mKeyStates[GLFW_KEY_A])
 	{

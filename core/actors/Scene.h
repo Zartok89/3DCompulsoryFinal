@@ -21,6 +21,8 @@ public:
 	void MaterialTextureLoading(Material*& material);
 	void LightingActorLoading();
 	void MeshActorLoading(Material* mat);
+	void GeneratePickups(Material* mat);
+	void PickingUpObjects();
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
@@ -77,6 +79,9 @@ public:
 	SceneGraph mSceneGraph;
     Camera mSceneCamera{ "SceneCamera" };
 
+    int mSpawnAmount;
+    std::vector<MeshActor*> mPickupVector;
+
     class Shader* mShader{ nullptr };
     class Skybox* mSkybox{ nullptr };
 
@@ -89,5 +94,4 @@ public:
     MeshActor* mSMABarn{nullptr};
     MeshActor* mSMABarnDoor{nullptr};
     MeshActor* mSMAGrassField{nullptr};
-    
 };
