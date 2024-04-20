@@ -11,6 +11,7 @@
 #include "GLFW/glfw3.h"
 #include "graphics/Skybox.h"
 #include "utility/AssimpLoader.h"
+#include "Mathematics/ParametricCurve.h"
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
@@ -97,6 +98,11 @@ void Scene::MeshActorLoading(Material* mat)
 	// Spawning pickups
 	mSpawnAmount = 5;
 	GeneratePickups(mat);
+
+	//Interpolation Curve
+	mSMAInterpolation = new MeshActor("InterpolationCurve");
+	mSMAInterpolation->mMesh = ParametricCurve::CreateInterpolationCurve3Points(0, 3, 0.2f);
+	mSMAInterpolation->mMesh->DrawLine = true;
 }
 
 void Scene::LightingActorLoading()
@@ -116,6 +122,7 @@ void Scene::ActorHierarchyLoading()
 	mSMABarn->AddChild(mSMABarnDoor);
 	mSMABarn->AddChild(mSMABarnHay);
 	mSceneGraph.AddChild(mDirectionalLight);
+	mSceneGraph.AddChild(mSMAInterpolation);
 }
 
 void Scene::ActorPositionCollisionLoading()
@@ -181,6 +188,8 @@ void Scene::UnloadContent()
 	mSMAPlayer = nullptr;
 	delete mSMABarn;
 	mSMABarn = nullptr;
+	delete mSMAInterpolation;
+	mSMAInterpolation = nullptr; 
 
 	for (MeshActor* mesh : mPickupVector)
 	{
@@ -217,7 +226,7 @@ void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
 	if (auto iRender = dynamic_cast<IRender*>(actor))
 	{
 		mShader->setMat4("model", globalTransform.GetTransformMatrix());
-		iRender->Draw(mShader);
+		iRender->Draw(mShader); 
 	}
 
 	const auto& children = actor->GetChildren();
@@ -225,6 +234,7 @@ void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
 	{
 		RenderSceneGraph(child, dt, globalTransform);
 	}
+
 }
 
 void Scene::UpdatingScene(float dt)

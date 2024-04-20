@@ -11,6 +11,7 @@
 #include "interfaces/ControllerInterface.h"
 #include "lighting/PointLight.h"
 #include "lighting/DirectionalLight.h"
+#include "Mathematics/ParametricCurve.h"
 
 class Scene
 {
@@ -98,4 +99,7 @@ public:
     MeshActor* mSMAGrassField{nullptr};
 
     bool bDoorIsClosed = true;
+};
+    MeshActor* mSMAInterpolation{ nullptr };
+ 
 };

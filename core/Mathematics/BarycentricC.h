@@ -12,7 +12,6 @@
 
 ///Includes
 #include "actors/MeshActor.h"
-#include "actors/MeshActor.h"
 #include "graphics/Mesh.h"
 #include "utility/Logger.h"
 

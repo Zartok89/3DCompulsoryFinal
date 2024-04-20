@@ -43,5 +43,6 @@ public:
     VBO mVBO{ 0U };
     EBO mEBO{ 0U };
 
+    bool DrawLine = false;
     static std::unordered_map<std::string, Mesh*> mCache;
 };

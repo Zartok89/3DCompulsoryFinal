@@ -9,6 +9,13 @@ public:
 	glm::vec3 mPosition;
     glm::vec3 mNormal;
     glm::vec2 mTexCoords;
+    
+    Vertex(float x, float y, float z)
+    {
+        mPosition = glm::vec3(x, y, z);
+        mNormal = glm::vec3(1.f);
+        mTexCoords = glm::vec2(1.f); 
+    }
 
     Vertex(const glm::vec3& position, const glm::vec3& normal, const glm::vec2& texCoords)
     {
