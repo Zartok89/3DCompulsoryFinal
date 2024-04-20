@@ -31,6 +31,7 @@ void Scene::GeneratePickups(Material* mat)
         MeshActor* mPickups{nullptr};
         mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
         mPickups->SetGlobalPosition(spawnPos);
+		mPickups->SetLocalScale(glm::vec3(0.5f, 1.f, 0.5f));
         mSceneGraph.AddChild(mPickups);
         mPickupVector.emplace_back(mPickups);
     }
@@ -38,13 +39,13 @@ void Scene::GeneratePickups(Material* mat)
 
 void Scene::PickingUpObjects()
 {
-	float pickupRange = 1.f;
+	float pickupRange = 0.5f;
 	for (const auto pickups : mPickupVector)
 	{
 		auto pickupPos = pickups->GetGlobalPosition();
 		auto playerPos = mSMAPlayer->GetGlobalPosition();
-		if (!(playerPos.x >= pickupPos.x + pickupRange || playerPos.x <= pickupPos.x - pickupRange)
-			&& !(playerPos.y >= pickupPos.y + pickupRange || playerPos.y <= pickupPos.y - pickupRange))
+		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) && 
+			(playerPos.y <= pickupPos.y + pickupRange && playerPos.y >= pickupPos.y - pickupRange ))
 		{
 			mSceneGraph.RemoveChild(pickups);
 		}
