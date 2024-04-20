@@ -17,7 +17,7 @@ public:
         float farPlane = 500.0f,
         float fieldOfView = 45.0f,
         float maxMovementSeed = 40.f,
-        float accelerationSpeed = 20.0f,
+        float accelerationSpeed = 60.0f,
         float dampingFactor = 5.0f);
 
     virtual void Update(float dt) override; // Updating  Camera Veclocity, Position and Dampening

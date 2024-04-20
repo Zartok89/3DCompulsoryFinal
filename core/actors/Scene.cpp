@@ -44,8 +44,8 @@ void Scene::PickingUpObjects()
 	{
 		auto pickupPos = pickups->GetGlobalPosition();
 		auto playerPos = mSMAPlayer->GetGlobalPosition();
-		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) && 
-			(playerPos.y <= pickupPos.y + pickupRange && playerPos.y >= pickupPos.y - pickupRange ))
+		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) &&
+			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange ))
 		{
 			mSceneGraph.RemoveChild(pickups);
 		}
@@ -116,6 +116,7 @@ void Scene::CameraAndControllerLoading()
 	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
 	mActorController = std::make_shared<ActorController>(mSMAPlayer, false, &mSceneCamera);
+
 	mCurrentController = mCameraController;
 }
 
