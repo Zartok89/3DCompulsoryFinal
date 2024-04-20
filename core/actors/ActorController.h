@@ -27,7 +27,7 @@ public:
 	Actor* mActor;
 	Camera* mCamera;
 	std::map<int, bool> mKeyStates;
-	bool mIsAttachedToPlayer = false;
+	bool mIsAttachedToPlayer = true;
 	float mCameraAngle = -30.f;
 	float mCameraPositionX = 0.f;
 	float mCameraPositionY = -9.f;

@@ -35,7 +35,6 @@ public:
     /*  
      * Member Variables
      */
-    Mesh* mMesh{ nullptr };
 	std::vector<Vertex> mVertices{};
     std::vector<Index> mIndices{};
     Material* mMaterial{nullptr};

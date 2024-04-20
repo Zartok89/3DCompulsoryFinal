@@ -51,7 +51,7 @@ void Scene::PickingUpObjects()
 	}
 }
 
-void Scene::EnterHouse()
+void Scene::EnterHouse(float dt)
 {
 	float collisionRangeX = 6.f;
 	float collisionRangeZ = 3.5f;
@@ -63,7 +63,11 @@ void Scene::EnterHouse()
 	{
 		if (bDoorIsClosed)
 		{
-			mSMABarnDoor->SetLocalPosition(glm::vec3(-700.f, 0.f, 0.f));
+			float maxRange = -700.f;
+			for (float lerp = 0; lerp >= maxRange; lerp -= dt)
+			{
+				mSMABarnDoor->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+			}
 			bDoorIsClosed = false;
 		}
 	}
@@ -133,9 +137,9 @@ void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
-	mActorController = std::make_shared<ActorController>(mSMAPlayer, false, &mSceneCamera);
+	mActorController = std::make_shared<ActorController>(mSMAPlayer, true, &mSceneCamera);
 
-	mCurrentController = mCameraController;
+	mCurrentController = mActorController;
 }
 
 void Scene::MaterialTextureLoading(Material*& material)
@@ -351,17 +355,18 @@ void Scene::HandleCollision()
 
 void Scene::RenderGUI()
 {
-	const char* items[] = { "FreeCamera", "MovePlayer", "MovePlayerWithCamera" };
+	const char* items[] = { "MovePlayerWithCamera", "MovePlayer", "FreeCamera"  };
 	static int item_current = 0; 
 
 	ImGui::Begin("Select controller: ");
-
+	
 	// Combo box
-	ImGui::Combo("Select Item", &item_current, items, IM_ARRAYSIZE(items));
+	ImGui::Combo("Camera Type", &item_current, items, IM_ARRAYSIZE(items));
 
 	if (item_current == 0)
 	{
-		mCurrentController = mCameraController;
+		mActorController->mIsAttachedToPlayer = true;
+		mCurrentController = mActorController;
 	}
 	else if (item_current == 1)
 	{
@@ -370,8 +375,7 @@ void Scene::RenderGUI()
 	}
 	else if (item_current == 2)
 	{
-		mActorController->mIsAttachedToPlayer = true;
-		mCurrentController = mActorController;
+		mCurrentController = mCameraController;
 	}
 
 	ImGui::Text("Player x value = %f", mSMAPlayer->GetGlobalPosition().x);
@@ -401,7 +405,7 @@ void Scene::RenderingScene(float dt)
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
 	PickingUpObjects();
-	EnterHouse();
+	EnterHouse(dt);
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

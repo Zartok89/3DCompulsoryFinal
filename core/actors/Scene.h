@@ -23,7 +23,7 @@ public:
 	void MeshActorLoading(Material* mat);
 	void GeneratePickups(Material* mat);
 	void PickingUpObjects();
-	void EnterHouse();
+	void EnterHouse(float dt);
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
