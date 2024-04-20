@@ -15,6 +15,7 @@ public:
      * Virtual Functions
      */
     void Draw(const Shader* shader = nullptr) const override;
+	AABBcollision GetAABB() const override;
 
 	// Index 1 = AABB, Index 2 = Barycentric Coordinates Collision
 	void* ChooseCollisionType(int index) override;

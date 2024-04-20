@@ -17,6 +17,25 @@ Scene::~Scene()
 {
 }
 
+#include <random>
+
+void Scene::GeneratePickups(Material* mat)
+{
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_real_distribution<float> dis(-10.f, 10.f);
+
+    for (int p = 0; p < mSpawnAmount; p++)
+    {
+        glm::vec3 spawnPos { dis(gen), .5f, dis(gen) };
+        MeshActor* mPickups{nullptr};
+        mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
+        mPickups->SetGlobalPosition(spawnPos);
+        mSceneGraph.AddChild(mPickups);
+        mPickupVector.emplace_back(mPickups);
+    }
+}
+
 void Scene::MeshActorLoading(Material* mat)
 {
 	mSkybox = new Skybox({
@@ -35,6 +54,10 @@ void Scene::MeshActorLoading(Material* mat)
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
 	mSMAGrassField = new MeshActor("mSMAGrassField");
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
+
+	// Spawning pickups
+	mSpawnAmount = 5;
+	GeneratePickups(mat);
 }
 
 void Scene::LightingActorLoading()
@@ -119,6 +142,12 @@ void Scene::UnloadContent()
 	mSMAPlayer = nullptr;
 	delete mSMABarn;
 	mSMABarn = nullptr;
+
+	for (MeshActor* mesh : mPickupVector)
+	{
+		delete mesh;
+		mesh = nullptr;
+	}
 
 	Mesh::ClearCache();
 	Material::ClearCache();
