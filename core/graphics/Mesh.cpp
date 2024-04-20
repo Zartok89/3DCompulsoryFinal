@@ -44,9 +44,19 @@ void Mesh::DrawMesh(const Shader* shader) const
 		mMaterial->BindMaterialTexture(shader);
     }
 
+
     glBindVertexArray(mVAO);
-    glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mIndices.size()), GL_UNSIGNED_INT, 0);
+
+    if (DrawLine)
+    {
+        glDrawElements(GL_LINE_STRIP, static_cast<GLsizei>(mIndices.size()), GL_UNSIGNED_INT, 0);
+    }
+    else
+    {
+        glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(mIndices.size()), GL_UNSIGNED_INT, 0);
+    }
     glBindVertexArray(0);
+  
 }
 
 Mesh* Mesh::Load(const std::string& path)

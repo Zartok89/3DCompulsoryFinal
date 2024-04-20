@@ -11,6 +11,7 @@
 #include "interfaces/ControllerInterface.h"
 #include "lighting/PointLight.h"
 #include "lighting/DirectionalLight.h"
+#include "Mathematics/ParametricCurve.h"
 
 class Scene
 {
@@ -94,4 +95,6 @@ public:
     MeshActor* mSMABarn{nullptr};
     MeshActor* mSMABarnDoor{nullptr};
     MeshActor* mSMAGrassField{nullptr};
+    MeshActor* mSMAInterpolation{ nullptr };
+ 
 };
