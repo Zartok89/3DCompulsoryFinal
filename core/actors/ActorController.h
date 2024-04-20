@@ -18,6 +18,7 @@ public:
     virtual void HandleMouseScroll(class Window* window, double xoffset, double yoffset) override;
     virtual void HandleMouseButton(class Window* window, int button, int action, int mods) override;
     virtual void HandleKeyboard(class Window* window, int key, int scancode, int action, int mods) override;
+	void RenderActorGUI();
 
 	/*
 	* Member variables
@@ -27,4 +28,8 @@ public:
 	Camera* mCamera;
 	std::map<int, bool> mKeyStates;
 	bool mIsAttachedToPlayer = false;
+	float mCameraAngle = -30.f;
+	float mCameraPositionX = 0.f;
+	float mCameraPositionY = -9.f;
+	float mCameraPositionZ = -14.f;
 };

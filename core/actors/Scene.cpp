@@ -8,14 +8,13 @@
 #include "utility/Logger.h"
 #include "Interfaces/RenderInterface.h"
 #include "actors/Actor.h"
+#include "GLFW/glfw3.h"
 #include "graphics/Skybox.h"
 #include "utility/AssimpLoader.h"
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
-Scene::~Scene()
-{
-}
+Scene::~Scene() {}
 
 #include <random>
 
@@ -52,6 +51,24 @@ void Scene::PickingUpObjects()
 	}
 }
 
+void Scene::EnterHouse()
+{
+	float collisionRangeX = 6.f;
+	float collisionRangeZ = 3.5f;
+	glm::vec3 barnLocation = mSMABarn->GetGlobalPosition();
+	auto playerPos = mSMAPlayer->GetGlobalPosition();
+
+	if ((playerPos.x <= barnLocation.x && playerPos.x >= barnLocation.x - 4) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		if (bDoorIsClosed)
+		{
+			mSMABarnDoor->SetLocalPosition(glm::vec3(-700.f, 0.f, 0.f));
+			bDoorIsClosed = false;
+		}
+	}
+}
+
 void Scene::MeshActorLoading(Material* mat)
 {
 	mSkybox = new Skybox({
@@ -70,6 +87,8 @@ void Scene::MeshActorLoading(Material* mat)
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
 	mSMAGrassField = new MeshActor("mSMAGrassField");
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
+	mSMABarnHay = new MeshActor("mSMABarnHay");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnHay.fbx", mSMABarnHay);
 
 	// Spawning pickups
 	mSpawnAmount = 5;
@@ -86,13 +105,12 @@ void Scene::LightingActorLoading()
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
-	mSceneGraph.AddChild(mPointLight);
 	mSceneGraph.AddChild(mSMAPlayer);
 	mSceneGraph.AddChild(mSMABarn);
-	mSceneGraph.AddChild(mSMABarnDoor);
 	mSceneGraph.AddChild(mSMAGrassField);
 	mSMABarn->AddChild(mPointLight);
 	mSMABarn->AddChild(mSMABarnDoor);
+	mSMABarn->AddChild(mSMABarnHay);
 	mSceneGraph.AddChild(mDirectionalLight);
 }
 
@@ -108,7 +126,7 @@ void Scene::ActorPositionCollisionLoading()
 	mSMAPlayer->ChooseCollisionType(2);
 	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
-	mSMABarnDoor->SetLocalPosition(glm::vec3(200.f, 0.f, 0.f));
+	//mSMABarnDoor->SetLocalPosition(glm::vec3(0.f, 0.f, 0.f));
 }
 
 void Scene::CameraAndControllerLoading()
@@ -356,6 +374,9 @@ void Scene::RenderGUI()
 		mCurrentController = mActorController;
 	}
 
+	ImGui::Text("Player x value = %f", mSMAPlayer->GetGlobalPosition().x);
+	ImGui::Text("Player z value = %f", mSMAPlayer->GetGlobalPosition().z);
+
 	ImGui::End();
 }
 
@@ -380,6 +401,7 @@ void Scene::RenderingScene(float dt)
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
 	PickingUpObjects();
+	EnterHouse();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

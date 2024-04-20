@@ -23,6 +23,7 @@ public:
 	void MeshActorLoading(Material* mat);
 	void GeneratePickups(Material* mat);
 	void PickingUpObjects();
+	void EnterHouse();
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
@@ -92,6 +93,9 @@ public:
     //------Scene 1: The Barn------//
     MeshActor* mSMAPlayer{nullptr};
     MeshActor* mSMABarn{nullptr};
+    MeshActor* mSMABarnHay{nullptr};
     MeshActor* mSMABarnDoor{nullptr};
     MeshActor* mSMAGrassField{nullptr};
+
+    bool bDoorIsClosed = true;
 };
