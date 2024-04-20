@@ -68,6 +68,10 @@ void ActorController::MovementWithCameraFollow(float dt)
 		acceleration.z -= movementSpeed;
 		mCamera->SetAcceleration(acceleration);
 	}
+		if (mKeyStates[GLFW_KEY_E])
+	{
+		mCamera->SetLocalRotation(glm::angleAxis((glm::radians(90.f)), glm::vec3(1.f, 0.f, 0.f)));
+	}
 }
 
 void ActorController::UpdateCurrentController(float dt)

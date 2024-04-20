@@ -12,12 +12,12 @@
 #include "graphics/Skybox.h"
 #include "utility/AssimpLoader.h"
 #include "Mathematics/ParametricCurve.h"
+#include <random>
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
 Scene::~Scene() {}
 
-#include <random>
 
 void Scene::GeneratePickups(Material* mat)
 {
@@ -31,7 +31,7 @@ void Scene::GeneratePickups(Material* mat)
         MeshActor* mPickups{nullptr};
         mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
         mPickups->SetGlobalPosition(spawnPos);
-		mPickups->SetLocalScale(glm::vec3(0.5f, 1.f, 0.5f));
+		mPickups->SetLocalScale(glm::vec3(0.5f, 3.f, 0.5f));
         mSceneGraph.AddChild(mPickups);
         mPickupVector.emplace_back(mPickups);
     }
@@ -52,7 +52,7 @@ void Scene::PickingUpObjects()
 	}
 }
 
-void Scene::EnterHouse(float dt)
+void Scene::OpenDoor(float dt)
 {
 	float collisionRangeX = 6.f;
 	float collisionRangeZ = 3.5f;
@@ -64,13 +64,48 @@ void Scene::EnterHouse(float dt)
 	{
 		if (bDoorIsClosed)
 		{
+			float lerp = mSMABarnDoor->GetLocalPosition().x;
 			float maxRange = -700.f;
-			for (float lerp = 0; lerp >= maxRange; lerp -= dt)
+			lerp -= dt*1000;
+			if (lerp >= maxRange)
 			{
 				mSMABarnDoor->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
 			}
-			bDoorIsClosed = false;
+			else
+			{
+				bDoorIsClosed = false;
+			}
 		}
+	}
+	else
+	{
+		float lerp = mSMABarnDoor->GetLocalPosition().x;
+		float originalxRange = 0.f;
+		lerp += dt*1000;
+		if (lerp <= originalxRange)
+		{
+			mSMABarnDoor->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+		}
+		else
+		{
+			bDoorIsClosed = true;
+		}
+	}
+}
+
+void Scene::EnteringHouse()
+{
+	float collisionRangeX = 6.f;
+	float collisionRangeZ = 3.5f;
+	glm::vec3 barnLocation = mSMABarn->GetGlobalPosition();
+	auto playerPos = mSMAPlayer->GetGlobalPosition();
+
+	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x - collisionRangeX) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		mActorController->mIsAttachedToPlayer = false;
+		mSceneCamera.SetGlobalPosition(glm::vec3{4.5f, 1.f, 0.f});
+		mSceneCamera.SetGlobalRotation(glm::angleAxis((glm::radians(90.f)), glm::vec3(0.f, 1.f, 0.f)));
 	}
 }
 
@@ -135,9 +170,9 @@ void Scene::ActorPositionCollisionLoading()
 	mSMAPlayer->SetGlobalPosition({0.f, 0.f, 10.f});
 	mSMABarn->SetGlobalPosition({0.f, 0.f, 0.f});
 	mSMAPlayer->ChooseCollisionType(2);
-	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
+	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
+	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
-	//mSMABarnDoor->SetLocalPosition(glm::vec3(0.f, 0.f, 0.f));
 }
 
 void Scene::CameraAndControllerLoading()
@@ -410,12 +445,15 @@ void Scene::RenderingScene(float dt)
 	BindDirectionalLight();
 	BindPointLights();
 	BindCamera();
+
+	// Draw stuff
 	RenderSceneGraph(&mSceneGraph, dt);
 	RenderGUI();
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
 	PickingUpObjects();
-	EnterHouse(dt);
+	OpenDoor(dt);
+	EnteringHouse();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

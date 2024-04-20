@@ -20,9 +20,14 @@ public:
 		mTransform.SetRotation(glm::angleAxis((glm::radians(rotationDegrees)), glm::vec3(axisX, axisY, axisZ)));
 	}
 
+	void SetLightRotation(const glm::vec3 direction)
+	{
+		mTransform.SetRotation(direction);
+	}
+
 	/*
 	* Member variables
 	*/
-	glm::vec3 mAmbient{ 0.5f, 0.5f, 0.5f };
+	glm::vec3 mAmbient{ .1f };
 	glm::vec3 mColor{ 1.f, 1.f, 1.f };
 };

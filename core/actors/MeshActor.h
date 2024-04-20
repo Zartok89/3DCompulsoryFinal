@@ -24,5 +24,4 @@ public:
      * Member variables
      */
     Mesh* mMesh{ nullptr };
-
 };
