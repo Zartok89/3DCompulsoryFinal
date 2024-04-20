@@ -36,6 +36,21 @@ void Scene::GeneratePickups(Material* mat)
     }
 }
 
+void Scene::PickingUpObjects()
+{
+	float pickupRange = 1.f;
+	for (const auto pickups : mPickupVector)
+	{
+		auto pickupPos = pickups->GetGlobalPosition();
+		auto playerPos = mSMAPlayer->GetGlobalPosition();
+		if (!(playerPos.x >= pickupPos.x + pickupRange || playerPos.x <= pickupPos.x - pickupRange)
+			&& !(playerPos.y >= pickupPos.y + pickupRange || playerPos.y <= pickupPos.y - pickupRange))
+		{
+			mSceneGraph.RemoveChild(pickups);
+		}
+	}
+}
+
 void Scene::MeshActorLoading(Material* mat)
 {
 	mSkybox = new Skybox({
@@ -362,6 +377,7 @@ void Scene::RenderingScene(float dt)
 	RenderGUI();
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
+	PickingUpObjects();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

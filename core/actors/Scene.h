@@ -22,6 +22,7 @@ public:
 	void LightingActorLoading();
 	void MeshActorLoading(Material* mat);
 	void GeneratePickups(Material* mat);
+	void PickingUpObjects();
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
