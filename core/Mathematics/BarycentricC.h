@@ -11,8 +11,7 @@
 #include <algorithm>
 
 ///Includes
-#include "actors/PawnActor.h"
-#include "actors/StaticMeshActor.h"
+#include "actors/MeshActor.h"
 #include "graphics/Mesh.h"
 #include "utility/Logger.h"
 

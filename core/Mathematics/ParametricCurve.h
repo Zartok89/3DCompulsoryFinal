@@ -1,45 +1,40 @@
 #pragma once
 #include <iostream>
 #include <string>
-#include <actors/PawnActor.h>
 #include <actors/Actor.h>
-#include <actors/StaticMeshActor.h>
+#include <actors/MeshActor.h>
 #include <graphics/Vertex.h>
 #include <glm/glm.hpp>
 
 class ParametricCurve : public Actor
 {
 
-	//Function for calculating third degree polynomial. Takes X or Z
-	glm::mat4x4 CreateRandomPointsMatrix(const double& randomNum1, const double& randomNum2, const double& randomNum3, const double& randomNum4)
+	//Creates a matrix with points to interpolate over
+	glm::mat4x2 PointMatrix(const double& randomX1, const double& randomX2, const double& randomX3, const double& randomX4)
 	{
 		//Insert random numbers for columns except y
-		return glm::mat4x2{ randomNum1,1,
-			                randomNum2,1,  
-						    randomNum3,1,
-			                randomNum4,1 
-		                 };
+		return glm::mat4x2{ randomX1, randomX2,
+			                randomX3, randomX4,
+			                randomX4, randomX1,
+			                randomX2, randomX1
+		                  };
 	}
-	glm::mat4x4  Fx(const glm::mat4x4& interpolationPoints) 
-	{
-		glm::mat4x4 getMatrix = {
-		interpolationPoints[0],
-		interpolationPoints[1],
-		interpolationPoints[2],
-		interpolationPoints[3]
-		}; 
 
-		glm::vec4 F1 = glm::vec4{ pow(getMatrix[0].x,3.f), pow(getMatrix[0].x,2.f), getMatrix[0].x, 1.f };
-		glm::vec4 F2 = glm::vec4{ pow(getMatrix[1].x,3.f), pow(getMatrix[1].x,2.f), getMatrix[1].x, 1.f };
-		glm::vec4 F3 = glm::vec4{ pow(getMatrix[2].x,3.f), pow(getMatrix[2].x,2.f), getMatrix[2].x, 1.f };
-		glm::vec4 F4 = glm::vec4{ pow(getMatrix[3].x,3.f), pow(getMatrix[3].x,2.f), getMatrix[3].x, 1.f };
+	//Matrifying the POintMatrix
+	glm::mat4x4  Y(const glm::mat4x2& pointVector)
+	{
+		
+		glm::vec4 t1 = glm::vec4{ pow(pointVector[0].x,3.f), pow(pointVector[0].x,2.f), pointVector[0].x, 1.f };
+		glm::vec4 t2 = glm::vec4{ pow(pointVector[1].x,3.f), pow(pointVector[1].x,2.f), pointVector[1].x, 1.f };
+		glm::vec4 t3 = glm::vec4{ pow(pointVector[2].x,3.f), pow(pointVector[2].x,2.f), pointVector[2].x, 1.f };
+		glm::vec4 t4 = glm::vec4{ pow(pointVector[3].x,3.f), pow(pointVector[3].x,2.f), pointVector[3].x, 1.f };
 
 		glm::mat4x4 finalMatrix
 		{
-			F1,
-			F2,
-			F3,
-			F4
+			t1,
+			t2,
+			t3,
+			t4
 		};
 
 		return finalMatrix; 
@@ -55,28 +50,33 @@ class ParametricCurve : public Actor
 
 public:
 
-	void CreateInterpolationCurve4Points(double startVal, double endingVal, double resolution, StaticMeshActor* staticMesh) 
+	void CreateInterpolationCurve4Points(double startVal, double endingVal, double resolution, MeshActor* staticMesh) 
 	{
 		///Creating random numbers
 		srand((unsigned) time(NULL));
 
-		auto random1 = staticMesh->GetLocalPosition().x + (rand() % + 10);
-		auto random2 = staticMesh->GetLocalPosition().x + (rand() % + 11);
-		auto random3 = staticMesh->GetLocalPosition().x + (rand() % + 12);
-		auto random4 = staticMesh->GetLocalPosition().x + (rand() % + 13);
+		auto randomY1 = staticMesh->GetLocalPosition().x + (rand() % + 10);
+		auto randomY2 = staticMesh->GetLocalPosition().x + (rand() % + 11);
+		auto randomY3 = staticMesh->GetLocalPosition().x + (rand() % + 12);
+		auto randomY4 = staticMesh->GetLocalPosition().x + (rand() % + 13);
+
+		auto random1 = staticMesh->GetLocalPosition().x;
+		auto random2 = staticMesh->GetLocalPosition().x;
+		auto random3 = staticMesh->GetLocalPosition().x;
+		auto random4 = staticMesh->GetLocalPosition().x;
 		
+		///Create Point in the form of a matrix to be extracted
+		auto a = PointMatrix(random1,random2,random3,random4); 
 
-		auto a = CreateRandomPointsMatrix(random1,random2,random3,random4);
-
-		// Output the coefficients
-		std::cout << "Create Matrix " << a << "\n";
+		//Print the Matrix
+		std::cout << "Create Point Matrix " << a << "\n";
 		std::cout << "\n";
 
-
-		auto b = Fx(a);
-		std::cout << "Final Matrix" << b << "\n";
+		 
+		auto b = Y(a); 
+		//Printing the matrix after interpolation fomrula is used
+		std::cout << "INterpoltaed matrix" << b << "\n";
 		
-
 
 		//Matrification
 		for (double i = startVal; startVal <= endingVal; i+= resolution)
