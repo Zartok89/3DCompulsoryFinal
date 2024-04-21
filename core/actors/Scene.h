@@ -26,7 +26,9 @@ public:
 	void PickingUpObjects();
 	void OpenDoor(float dt);
 	void EnteringHouse();
-	void TempHouseCollision();
+	void SimpleCollision(MeshActor* player, float playerWidth, float playerLength, 
+	MeshActor* otherObject, float otherWidth, float otherLength);
+	void NPCWalking(MeshActor* NPC, float dt);
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
@@ -92,8 +94,14 @@ public:
 	PointLight* mPointLight{ nullptr };
 	DirectionalLight* mDirectionalLight{ nullptr };
 	DirectionalLight* mDirectionalLightGrass{ nullptr };
+	ParametricCurve* ParaCurve;
     MeshActor* mSMAInterpolation{ nullptr };
 
 	std::unordered_map<std::string, MeshActor*> ActorMap;
     bool bDoorIsClosed = true;
+	int c = 0; // count variable
+    	float t = 0.0f; // Parameter for interpolation
+	int currentIndex = 0; // Current index in the points vector
+	int direction = 1; // Direction of movement, 1 for forward, -1 for backward
+
 };
