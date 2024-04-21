@@ -11,8 +11,9 @@ class ParametricCurve
 	
 
 public:
+	std::vector<Vertex> F; 
 
-	static Mesh* CreateInterpolationCurve3Points(const double& startVal, const double& endingVal, const double& resolution) 
+	Mesh* CreateInterpolationCurve3Points(const double& startVal, const double& endingVal, const double& resolution) 
 	{
 		///Creating random numbers
 		srand((unsigned) time(NULL));
@@ -46,7 +47,7 @@ public:
 		auto getX = getInverse * b; 
 		 
 		//Crating a array of Vertices
-		std::vector<Vertex> F; 
+		//std::vector<Vertex> F; 
 		std::vector<unsigned int> Indices;
 
 		for (double x = startVal; x <= endingVal; x += resolution)
@@ -63,7 +64,6 @@ public:
 		return new Mesh("InterpolationC", std::move(F), std::move(Indices), nullptr);
 
 	}
-
 
 
 };

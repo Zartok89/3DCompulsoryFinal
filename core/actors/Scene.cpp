@@ -1,6 +1,7 @@
 #include "Scene.h"
 
 #include <imgui.h>
+#include <memory>
 
 #include "camera/CameraController.h"
 #include "shaders/Shader.h"
@@ -19,23 +20,22 @@ Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
 Scene::~Scene() {}
 
-
 void Scene::GeneratePickups(Material* mat)
 {
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    std::uniform_real_distribution<float> dis(-10.f, 10.f);
+	std::random_device rd;
+	std::mt19937 gen(rd());
+	std::uniform_real_distribution<float> dis(-10.f, 10.f);
 
-    for (int p = 0; p < mSpawnAmount; p++)
-    {
-        glm::vec3 spawnPos { dis(gen), .5f, dis(gen) };
-        MeshActor* mPickups{nullptr};
-        mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
-        mPickups->SetGlobalPosition(spawnPos);
+	for (int p = 0; p < mSpawnAmount; p++)
+	{
+		glm::vec3 spawnPos{ dis(gen), .5f, dis(gen) };
+		MeshActor* mPickups{ nullptr };
+		mPickups = new MeshActor("mPickupObject" + std::to_string(p), Mesh::CreateCube(mat));
+		mPickups->SetGlobalPosition(spawnPos);
 		mPickups->SetLocalScale(glm::vec3(0.5f, 3.f, 0.5f));
-        mSceneGraph.AddChild(mPickups);
-        mPickupVector.emplace_back(mPickups);
-    }
+		mSceneGraph.AddChild(mPickups);
+		mPickupVector.emplace_back(mPickups);
+	}
 }
 
 void Scene::PickingUpObjects()
@@ -46,7 +46,7 @@ void Scene::PickingUpObjects()
 		auto pickupPos = pickups->GetGlobalPosition();
 		auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) &&
-			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange ))
+			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange))
 		{
 			mSceneGraph.RemoveChild(pickups);
 		}
@@ -56,18 +56,18 @@ void Scene::PickingUpObjects()
 void Scene::OpenDoor(float dt)
 {
 	float collisionRangeX = 6.f;
-	float collisionRangeZ = 3.5f;
+	float collisionRangeZ = 3.f;
 	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
 	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
 	if ((playerPos.x <= barnLocation.x && playerPos.x >= barnLocation.x - 4) &&
-	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+		(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ))
 	{
 		if (bDoorIsClosed)
 		{
 			float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
 			float maxRange = -700.f;
-			lerp -= dt*1000;
+			lerp -= dt * 1000;
 			if (lerp >= maxRange)
 			{
 				ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
@@ -82,7 +82,7 @@ void Scene::OpenDoor(float dt)
 	{
 		float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
 		float originalxRange = 0.f;
-		lerp += dt*1000;
+		lerp += dt * 1000;
 		if (lerp <= originalxRange)
 		{
 			ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
@@ -96,24 +96,88 @@ void Scene::OpenDoor(float dt)
 
 void Scene::EnteringHouse()
 {
-	float collisionRangeX = 6.f;
-	float collisionRangeZ = 3.5f;
+	float collisionRangeX = 5.f;
+	float collisionRangeZ = 3.f;
 	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
 	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
 	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x - collisionRangeX) &&
-	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+		(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ))
 	{
 		mActorController->mIsAttachedToPlayer = false;
-		mSceneCamera.SetGlobalPosition(glm::vec3{4.5f, 1.f, 0.f});
+		mSceneCamera.SetGlobalPosition(glm::vec3{ 4.5f, 1.f, 0.f });
 		mSceneCamera.SetGlobalRotation(glm::angleAxis((glm::radians(90.f)), glm::vec3(0.f, 1.f, 0.f)));
 	}
 }
 
-void Scene::TempHouseCollision()
+void Scene::SimpleCollision(MeshActor* player, float playerWidth, float playerLength,
+	MeshActor* otherObject, float otherWidth, float otherLength)
 {
-	
+	glm::vec3 playerPos = player->GetGlobalPosition();
+	glm::vec3 otherPos = otherObject->GetGlobalPosition();
+
+	if ((playerPos.x - playerWidth <= otherPos.x + otherWidth) && (playerPos.x + playerWidth >= otherPos.x - otherWidth))
+	{
+		std::cout << "Collisjon\n";
+	}
 }
+
+//void Scene::NPCWalking(MeshActor* NPC, float dt)
+//{
+//    std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
+//
+//    if (NPC->GetGlobalPosition() != tempVec.back().mPosition)
+//    {
+//        glm::vec3 currentPosition = NPC->GetGlobalPosition();
+//        glm::vec3 targetPosition = tempVec[c].mPosition;
+//        glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, 0.1f * dt);
+//        NPC->SetGlobalPosition(newPosition);
+//    }
+//    c++;
+//}
+
+glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t)
+{
+	return a + t * (b - a);
+}
+
+void Scene::NPCWalking(MeshActor* NPC, float dt)
+{
+	std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
+
+	t += dt * direction; // Adjust speed by changing deltaTime factor
+
+	if (t >= -10.0f) {
+		t = 0.0f;
+		currentIndex += direction;
+		if (currentIndex == tempVec.size() - 1 || currentIndex == 0) {
+			direction *= -1; // Reverse direction at the end points
+		}
+	}
+	glm::vec3 curveInfo = mSMAInterpolation->GetGlobalPosition();
+	glm::vec3 currentPosition = lerp(tempVec[currentIndex].mPosition + curveInfo, tempVec[currentIndex + direction].mPosition + curveInfo, t);
+	NPC->SetGlobalPosition(currentPosition);
+}
+
+//void Scene::SimpleCollision(MeshActor& Player, MeshActor& otherObjec)
+//{
+//	float collisionRangeX = 5.f;
+//	float collisionRangeZ = 3.5f;
+//	float wallThickness = 1.f;
+//	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+//	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
+//	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x + collisionRangeX - wallThickness) &&
+//	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+//	{
+//		std::cout << "house detected\n";
+//	}
+//	if ((playerPos.x <= barnLocation.x - collisionRangeX + wallThickness && playerPos.x >= barnLocation.x - collisionRangeX ) &&
+//	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+//	{
+//		std::cout << "house detected\n";
+//		//ActorMap["Player"]->SetGlobalPosition(glm::vec3{ActorMap["Player"]->GetGlobalPosition().x - .2f, ActorMap["Player"]->GetGlobalPosition().y, ActorMap["Player"]->GetGlobalPosition().z});
+//	}
+//}
 
 void Scene::MeshActorLoading(Material* mat)
 {
@@ -134,16 +198,18 @@ void Scene::MeshActorLoading(Material* mat)
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", ActorMap["BarnDoor"]);
 	ActorMap["GrassField"] = new MeshActor("mSMAGrassField");
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", ActorMap["GrassField"]);
+	ActorMap["NPC"] = new MeshActor("mSMANPC");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/HorseNPC.fbx", ActorMap["NPC"]);
 	ActorMap["BarnHay"] = new MeshActor("mSMABarnHay");
 	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnHay.fbx", ActorMap["BarnHay"]);
-
 	// Spawning pickups
 	mSpawnAmount = 5;
 	GeneratePickups(mat);
 
 	//Interpolation Curve
+	ParaCurve = new ParametricCurve();
 	mSMAInterpolation = new MeshActor("InterpolationCurve");
-	mSMAInterpolation->mMesh = ParametricCurve::CreateInterpolationCurve3Points(0, 3, 0.2f);
+	mSMAInterpolation->mMesh = ParaCurve->CreateInterpolationCurve3Points(0, 13, 0.2f);
 	mSMAInterpolation->mMesh->DrawLine = true;
 
 	//Curve
@@ -153,7 +219,7 @@ void Scene::MeshActorLoading(Material* mat)
 
 void Scene::LightingActorLoading()
 {
-	//mPointLight = new PointLight("Point light 0");
+	mPointLight = new PointLight("Point light 0");
 	mDirectionalLight = new DirectionalLight("Directional light");
 	mDirectionalLightGrass = new DirectionalLight("mDirectionalLightGrass");
 }
@@ -161,6 +227,7 @@ void Scene::LightingActorLoading()
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
+	mSceneGraph.AddChild(ActorMap["NPC"]);
 	mSceneGraph.AddChild(ActorMap["Player"]);
 	mSceneGraph.AddChild(ActorMap["Barn"]);
 	mSceneGraph.AddChild(ActorMap["GrassField"]);
@@ -175,12 +242,15 @@ void Scene::ActorHierarchyLoading()
 void Scene::ActorPositionCollisionLoading()
 {
 	ActorMap["Player"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["NPC"]->SetLocalScale(glm::vec3(0.005f));
 	ActorMap["Barn"]->SetLocalScale(glm::vec3(0.005f));
 	ActorMap["GrassField"]->SetLocalScale(glm::vec3(0.005f));
 	ActorMap["Player"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
 	ActorMap["Barn"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	ActorMap["Player"]->SetGlobalPosition({0.f, 0.f, 10.f});
-	ActorMap["Barn"]->SetGlobalPosition({0.f, 0.f, 0.f});
+	ActorMap["Player"]->SetGlobalPosition({ 0.f, 0.f, 10.f });
+	ActorMap["NPC"]->SetGlobalPosition({ 0.f, 0.f, 0.f });
+	ActorMap["Barn"]->SetGlobalPosition({ 0.f, 0.f, 0.f });
+	mSMAInterpolation->SetGlobalPosition({ 10.f, 0, 0.f });
 	//ActorMap["Player"]->ChooseCollisionType(2);
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
@@ -216,7 +286,6 @@ void Scene::LoadContent()
 	LightingActorLoading();
 
 	mShader = new Shader(SOURCE_DIRECTORY + "core/shaders/shader.vs", SOURCE_DIRECTORY + "core/shaders/shader.fs");
-
 
 	ActorHierarchyLoading();
 	ActorPositionCollisionLoading();
@@ -257,7 +326,7 @@ void Scene::UnloadContent()
 
 	Mesh::ClearCache();
 	Material::ClearCache();
-	Texture::ClearCache();	
+	Texture::ClearCache();
 }
 
 void Scene::UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform)
@@ -269,7 +338,7 @@ void Scene::UpdateSceneGraph(Actor* actor, float dt, Transform globalTransform)
 	actor->Update(dt);
 
 	const auto& children = actor->GetChildren();
-	for (Actor* child : children) 
+	for (Actor* child : children)
 	{
 		UpdateSceneGraph(child, dt, globalTransform);
 	}
@@ -284,7 +353,7 @@ void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
 	if (auto iRender = dynamic_cast<IRender*>(actor))
 	{
 		mShader->setMat4("model", globalTransform.GetTransformMatrix());
-		iRender->Draw(mShader); 
+		iRender->Draw(mShader);
 	}
 
 	const auto& children = actor->GetChildren();
@@ -292,7 +361,6 @@ void Scene::RenderSceneGraph(Actor* actor, float dt, Transform globalTransform)
 	{
 		RenderSceneGraph(child, dt, globalTransform);
 	}
-
 }
 
 void Scene::UpdatingScene(float dt)
@@ -300,6 +368,7 @@ void Scene::UpdatingScene(float dt)
 	UpdateCurrentController(dt);
 	UpdateSceneGraph(&mSceneGraph, dt);
 	HandleCollision();
+	NPCWalking(ActorMap["NPC"], dt);
 }
 
 void Scene::BindDirectionalLight()
@@ -346,7 +415,7 @@ void Scene::BindCamera()
 
 void Scene::UpdateCurrentController(float dt)
 {
-		if (mCurrentController)
+	if (mCurrentController)
 		mCurrentController->UpdateCurrentController(dt);
 }
 
@@ -373,14 +442,14 @@ void Scene::HandleCollision()
 	//		// Skip intersection checks for two static objects
 	//		if (iA->GetCollisionProperties().IsStatic() &&
 	//			iB->GetCollisionProperties().IsStatic())
-	//		{ 
+	//		{
 	//			continue;
 	//		}
 
 	//		auto a = iA->GetAABB();
 	//		auto b = iB->GetAABB();
 
-	//		glm::vec3 mtv{}; // minimum translation vector to resolve the collision		
+	//		glm::vec3 mtv{}; // minimum translation vector to resolve the collision
 	//		if (a.Intersect(b, &mtv)) // This means that the two bounding boxes intersect
 	//		{
 	//			// Determine how to apply the MTV based on the collision responses of the actors
@@ -423,11 +492,11 @@ void Scene::HandleCollision()
 
 void Scene::RenderGUI()
 {
-	const char* items[] = { "MovePlayerWithCamera", "MovePlayer", "FreeCamera"  };
-	static int item_current = 0; 
+	const char* items[] = { "MovePlayerWithCamera", "MovePlayer", "FreeCamera" };
+	static int item_current = 0;
 
 	ImGui::Begin("Select controller: ");
-	
+
 	// Combo box
 	ImGui::Combo("Camera Type", &item_current, items, IM_ARRAYSIZE(items));
 
@@ -456,7 +525,7 @@ void Scene::RenderingScene(float dt)
 {
 	static bool bShowDemoWindow = false;
 	if (bShowDemoWindow)
-	{ 
+	{
 		ImGui::ShowDemoWindow(&bShowDemoWindow);
 	}
 	glEnable(GL_DEPTH_TEST);
@@ -477,6 +546,9 @@ void Scene::RenderingScene(float dt)
 	PickingUpObjects();
 	OpenDoor(dt);
 	EnteringHouse();
+	//NPCWalking(ActorMap["NPC"], dt);
+	//SimpleCollision(ActorMap["Player"], .5f, .5f,
+	//	ActorMap["BarnHay"], 2.f, 1.f);
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)
@@ -515,4 +587,3 @@ void Scene::KeyCallback(Window* window, int key, int scancode, int action, int m
 		mCurrentController->HandleKeyboard(window, key, scancode, action, mods);
 	}
 }
-
