@@ -18,7 +18,7 @@ public:
 	AABBcollision GetAABB() const override;
 
 	// Index 1 = AABB, Index 2 = Barycentric Coordinates Collision
-	void* ChooseCollisionType(int index) override;
+	void* ChooseCollisionType(int index, Mesh*) override;
 
     /*
      * Member variables

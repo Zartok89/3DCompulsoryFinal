@@ -16,16 +16,16 @@ public:
 	using FunctionPtr = void (*)();
 
 	// Index 1 = AABB, Index 2 = Barycentric Coordinates Collision
-	virtual void (*ChooseCollisionType(int index))
+	virtual void (*ChooseCollisionType(int index, Mesh* mesh))
 	{
 		switch (index)
 		{
 		case 1:
-			glm::vec3* Vec3Ptr;
-			AABB(glm::vec3(1.f), glm::vec3(4.f), Vec3Ptr);
+			//glm::vec3* Vec3Ptr;
+			//AABB(glm::vec3(1.f), glm::vec3(4.f), Vec3Ptr);
 			break;
 		case 2:
-			BarycentricCollision(mStaticMeshPointer);
+			BarycentricCollision(mesh);
 			break;
 		default:
 			return nullptr;
@@ -33,10 +33,10 @@ public:
 		return nullptr;
 	}
 
-	void BarycentricCollision(class PawnActor* staticMesh) const
+	void BarycentricCollision(class Mesh* staticMesh) const
 	{
 		std::cout << "Hello! I am function pointer\n";
-		mBarycentricCPtr->getBarycentricCoordinatesActor(staticMesh);
+		BarycentricC::getBarycentricCoordinatesActor(staticMesh);
 	}
 
 	void AABB(const glm::vec3& center, const glm::vec3& extent, glm::vec3* mtv)
@@ -48,8 +48,8 @@ public:
 	/*
 	 * Pointers to other classes
 	 */
-	BarycentricC* mBarycentricCPtr;
+	//BarycentricC* mBarycentricCPtr;
 	//AABBcollision* AABBPtr;
-	PawnActor* mStaticMeshPointer;
+	//PawnActor* mStaticMeshPointer;
 
 };
