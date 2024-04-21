@@ -55,7 +55,7 @@ void Scene::PickingUpObjects()
 void Scene::OpenDoor(float dt)
 {
 	float collisionRangeX = 6.f;
-	float collisionRangeZ = 3.5f;
+	float collisionRangeZ = 3.f;
 	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
 	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
@@ -95,8 +95,8 @@ void Scene::OpenDoor(float dt)
 
 void Scene::EnteringHouse()
 {
-	float collisionRangeX = 6.f;
-	float collisionRangeZ = 3.5f;
+	float collisionRangeX = 5.f;
+	float collisionRangeZ = 3.f;
 	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
 	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
@@ -111,7 +111,23 @@ void Scene::EnteringHouse()
 
 void Scene::TempHouseCollision()
 {
-	
+	float collisionRangeX = 5.f;
+	float collisionRangeZ = 3.5f;
+	float wallThickness = 1.f;
+	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
+	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x + collisionRangeX - wallThickness) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		std::cout << "house detected\n";
+	}
+	if ((playerPos.x <= barnLocation.x - collisionRangeX + wallThickness && playerPos.x >= barnLocation.x - collisionRangeX ) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		std::cout << "house detected\n";
+		mActorController->bKeyADisabled = true;
+		//ActorMap["Player"]->SetGlobalPosition(glm::vec3{ActorMap["Player"]->GetGlobalPosition().x - .2f, ActorMap["Player"]->GetGlobalPosition().y, ActorMap["Player"]->GetGlobalPosition().z});
+	}
 }
 
 void Scene::MeshActorLoading(Material* mat)
@@ -464,6 +480,7 @@ void Scene::RenderingScene(float dt)
 	PickingUpObjects();
 	OpenDoor(dt);
 	EnteringHouse();
+	TempHouseCollision();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)
