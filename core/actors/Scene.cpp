@@ -121,20 +121,6 @@ void Scene::SimpleCollision(MeshActor* player, float playerWidth, float playerLe
 	}
 }
 
-//void Scene::NPCWalking(MeshActor* NPC, float dt)
-//{
-//    std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
-//
-//    if (NPC->GetGlobalPosition() != tempVec.back().mPosition)
-//    {
-//        glm::vec3 currentPosition = NPC->GetGlobalPosition();
-//        glm::vec3 targetPosition = tempVec[c].mPosition;
-//        glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, 0.1f * dt);
-//        NPC->SetGlobalPosition(newPosition);
-//    }
-//    c++;
-//}
-
 glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t)
 {
 	return a + t * (b - a);
@@ -142,20 +128,23 @@ glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t)
 
 void Scene::NPCWalking(MeshActor* NPC, float dt)
 {
-	std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
+	if (bNPCFollowCurve)
+	{
+		std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
 
-	t += dt * direction; // Adjust speed by changing deltaTime factor
+		t += dt * direction;
 
-	if (t >= -10.0f) {
-		t = 0.0f;
-		currentIndex += direction;
-		if (currentIndex == tempVec.size() - 1 || currentIndex == 0) {
-			direction *= -1; // Reverse direction at the end points
+		if (t >= -10.0f) {
+			t = 0.0f;
+			currentIndex += direction;
+			if (currentIndex == tempVec.size() - 1 || currentIndex == 0) {
+				direction *= -1;
+			}
 		}
+		glm::vec3 curveInfo = mSMAInterpolation->GetGlobalPosition();
+		glm::vec3 currentPosition = lerp(tempVec[currentIndex].mPosition + curveInfo, tempVec[currentIndex + direction].mPosition + curveInfo, t);
+		NPC->SetGlobalPosition(currentPosition);
 	}
-	glm::vec3 curveInfo = mSMAInterpolation->GetGlobalPosition();
-	glm::vec3 currentPosition = lerp(tempVec[currentIndex].mPosition + curveInfo, tempVec[currentIndex + direction].mPosition + curveInfo, t);
-	NPC->SetGlobalPosition(currentPosition);
 }
 
 //void Scene::SimpleCollision(MeshActor& Player, MeshActor& otherObjec)
@@ -505,7 +494,12 @@ void Scene::RenderGUI()
 	ImGui::Text("Player x value = %f", ActorMap["Player"]->GetGlobalPosition().x);
 	ImGui::Text("Player z value = %f", ActorMap["Player"]->GetGlobalPosition().z);
 
+	if (ImGui::Button(bNPCFollowCurve ? "NPC ENABLED" : "NPC DISABLED"))
+	{
+        bNPCFollowCurve = !bNPCFollowCurve;
+	}
 	ImGui::End();
+
 }
 
 void Scene::RenderingScene(float dt)
