@@ -175,7 +175,7 @@ void Scene::ActorPositionCollisionLoading()
 	ActorMap["Barn"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
 	ActorMap["Player"]->SetGlobalPosition({0.f, 0.f, 10.f});
 	ActorMap["Barn"]->SetGlobalPosition({0.f, 0.f, 0.f});
-	ActorMap["Player"]->ChooseCollisionType(2);
+	//ActorMap["Player"]->ChooseCollisionType(2);
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
