@@ -13,6 +13,7 @@
 #include "utility/AssimpLoader.h"
 #include "Mathematics/ParametricCurve.h"
 #include <random>
+#include <string>
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
@@ -144,6 +145,10 @@ void Scene::MeshActorLoading(Material* mat)
 	mSMAInterpolation = new MeshActor("InterpolationCurve");
 	mSMAInterpolation->mMesh = ParametricCurve::CreateInterpolationCurve3Points(0, 3, 0.2f);
 	mSMAInterpolation->mMesh->DrawLine = true;
+
+	//Curve
+	mSMAPlane = new MeshActor("Plane");
+	mSMAPlane->mMesh = BarycentricC::CreatePlane(-5,-10,5,20,0.1f);
 }
 
 void Scene::LightingActorLoading()
@@ -164,6 +169,7 @@ void Scene::ActorHierarchyLoading()
 	ActorMap["Barn"]->AddChild(ActorMap["BarnHay"]);
 	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mSMAInterpolation);
+	mSceneGraph.AddChild(mSMAPlane);
 }
 
 void Scene::ActorPositionCollisionLoading()
@@ -179,6 +185,10 @@ void Scene::ActorPositionCollisionLoading()
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
+
+	//Collision handling
+	//std::string PlayerModel = "Assets/Models/Horse.fbx";
+	//BarycentricC::getBarycentricCoordinatesActor(PlayerModel, ActorMap["Player"]->mMesh); 
 }
 
 void Scene::CameraAndControllerLoading()
@@ -233,8 +243,11 @@ void Scene::UnloadContent()
 	delete ActorMap["BarnDoor"];
 	ActorMap["GrassField"] = nullptr;
 	delete ActorMap["GrassField"];
+
 	delete mSMAInterpolation;
 	mSMAInterpolation = nullptr; 
+	delete mSMAPlane;
+	mSMAPlane = nullptr; 
 
 	for (MeshActor* mesh : mPickupVector)
 	{
