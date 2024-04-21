@@ -73,8 +73,6 @@ void CameraController::UpdateCurrentController(float dt)
 
 void CameraController::HandleKeyboard(Window* window, int key, int scancode, int action, int mods)
 {
-    LOG_INFO("CameraController::HandleKeyboard");
-
     if (action == GLFW_PRESS || action == GLFW_REPEAT) 
     {
         mKeyStates[key] = true;

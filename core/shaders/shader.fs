@@ -49,18 +49,18 @@ uniform vec3 viewPos;
 // Lots of optimizations can be done here
 vec3 CalculateDirectionalLightContribution()
 {   
-    vec3 lightDir = normalize(dl.direction);
+    vec3 lightDir = normalize(-dl.direction);
     vec3 viewDir = normalize(viewPos - FragPos);
-    vec3 reflectDir = reflect(lightDir, Normal);
+    vec3 reflectDir = reflect(-lightDir, Normal);
 
-    float NdL = max(dot(Normal, -lightDir), 0);
+    float NdL = max(dot(Normal, lightDir), 0);
     float VdR = pow(max(dot(viewDir, reflectDir), 0), material.shininess);
     
-    vec3 materialDiffuseColor = vec3(texture(material.diffuseMap, TexCoord)) * material.diffuseColor;
+    vec3 materialDiffuseColor = vec3(texture(material.diffuseMap, TexCoord));
     vec3 materialSpecularColor = vec3(texture(material.specularMap, TexCoord));
 
     vec3 ambientContribution = dl.ambient * materialDiffuseColor;
-    vec3 diffuseContribution = materialDiffuseColor * NdL;
+    vec3 diffuseContribution = materialDiffuseColor  * dl.color * NdL;
     vec3 specularContribution = dl.color * materialSpecularColor * VdR;
 
     return ambientContribution + diffuseContribution + specularContribution;

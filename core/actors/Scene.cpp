@@ -8,17 +8,16 @@
 #include "utility/Logger.h"
 #include "Interfaces/RenderInterface.h"
 #include "actors/Actor.h"
+#include "GLFW/glfw3.h"
 #include "graphics/Skybox.h"
 #include "utility/AssimpLoader.h"
 #include "Mathematics/ParametricCurve.h"
+#include <random>
 
 Scene::Scene(const std::string& name) : mSceneGraph(name) {}
 
-Scene::~Scene()
-{
-}
+Scene::~Scene() {}
 
-#include <random>
 
 void Scene::GeneratePickups(Material* mat)
 {
@@ -32,7 +31,7 @@ void Scene::GeneratePickups(Material* mat)
         MeshActor* mPickups{nullptr};
         mPickups = new MeshActor("mPickupObject"+std::to_string(p), Mesh::CreateCube(mat));
         mPickups->SetGlobalPosition(spawnPos);
-		mPickups->SetLocalScale(glm::vec3(0.5f, 1.f, 0.5f));
+		mPickups->SetLocalScale(glm::vec3(0.5f, 3.f, 0.5f));
         mSceneGraph.AddChild(mPickups);
         mPickupVector.emplace_back(mPickups);
     }
@@ -44,13 +43,75 @@ void Scene::PickingUpObjects()
 	for (const auto pickups : mPickupVector)
 	{
 		auto pickupPos = pickups->GetGlobalPosition();
-		auto playerPos = mSMAPlayer->GetGlobalPosition();
+		auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) &&
 			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange ))
 		{
 			mSceneGraph.RemoveChild(pickups);
 		}
 	}
+}
+
+void Scene::OpenDoor(float dt)
+{
+	float collisionRangeX = 6.f;
+	float collisionRangeZ = 3.5f;
+	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
+
+	if ((playerPos.x <= barnLocation.x && playerPos.x >= barnLocation.x - 4) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		if (bDoorIsClosed)
+		{
+			float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
+			float maxRange = -700.f;
+			lerp -= dt*1000;
+			if (lerp >= maxRange)
+			{
+				ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+			}
+			else
+			{
+				bDoorIsClosed = false;
+			}
+		}
+	}
+	else
+	{
+		float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
+		float originalxRange = 0.f;
+		lerp += dt*1000;
+		if (lerp <= originalxRange)
+		{
+			ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+		}
+		else
+		{
+			bDoorIsClosed = true;
+		}
+	}
+}
+
+void Scene::EnteringHouse()
+{
+	float collisionRangeX = 6.f;
+	float collisionRangeZ = 3.5f;
+	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
+
+	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x - collisionRangeX) &&
+	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
+	{
+		mActorController->mIsAttachedToPlayer = false;
+		mSceneCamera.SetGlobalPosition(glm::vec3{4.5f, 1.f, 0.f});
+		mSceneCamera.SetGlobalRotation(glm::angleAxis((glm::radians(90.f)), glm::vec3(0.f, 1.f, 0.f)));
+	}
+}
+
+void Scene::TempHouseCollision()
+{
+	
 }
 
 void Scene::MeshActorLoading(Material* mat)
@@ -63,14 +124,17 @@ void Scene::MeshActorLoading(Material* mat)
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Front.png",
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Back.png",
 		});
-	mSMAPlayer = new MeshActor("mStaticMeshActor0");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", mSMAPlayer);
-	mSMABarn = new MeshActor("mSMABarn");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", mSMABarn);
-	mSMABarnDoor = new MeshActor("mSMABarnDoor");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
-	mSMAGrassField = new MeshActor("mSMAGrassField");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
+
+	ActorMap["Player"] = new MeshActor("mSMAPlayer");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", ActorMap["Player"]);
+	ActorMap["Barn"] = new MeshActor("mSMABarn");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", ActorMap["Barn"]);
+	ActorMap["BarnDoor"] = new MeshActor("mSMABarnDoor");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", ActorMap["BarnDoor"]);
+	ActorMap["GrassField"] = new MeshActor("mSMAGrassField");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", ActorMap["GrassField"]);
+	ActorMap["BarnHay"] = new MeshActor("mSMABarnHay");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnHay.fbx", ActorMap["BarnHay"]);
 
 	// Spawning pickups
 	mSpawnAmount = 5;
@@ -92,39 +156,38 @@ void Scene::LightingActorLoading()
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
-	mSceneGraph.AddChild(mPointLight);
-	mSceneGraph.AddChild(mSMAPlayer);
-	mSceneGraph.AddChild(mSMABarn);
-	mSceneGraph.AddChild(mSMABarnDoor);
-	mSceneGraph.AddChild(mSMAGrassField);
-	mSMABarn->AddChild(mPointLight);
-	mSMABarn->AddChild(mSMABarnDoor);
+	mSceneGraph.AddChild(ActorMap["Player"]);
+	mSceneGraph.AddChild(ActorMap["Barn"]);
+	mSceneGraph.AddChild(ActorMap["GrassField"]);
+	ActorMap["Barn"]->AddChild(mPointLight);
+	ActorMap["Barn"]->AddChild(ActorMap["BarnDoor"]);
+	ActorMap["Barn"]->AddChild(ActorMap["BarnHay"]);
 	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mSMAInterpolation);
 }
 
 void Scene::ActorPositionCollisionLoading()
 {
-	mSMAPlayer->SetLocalScale(glm::vec3(0.005f));
-	mSMABarn->SetLocalScale(glm::vec3(0.005f));
-	mSMAGrassField->SetLocalScale(glm::vec3(0.005f));
-	mSMAPlayer->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mSMABarn->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mSMAPlayer->SetGlobalPosition({0.f, 0.f, 10.f});
-	mSMABarn->SetGlobalPosition({0.f, 0.f, 0.f});
-	mSMAPlayer->ChooseCollisionType(2);
-	mDirectionalLight->SetLightRotation(-90.f, 1, 0, 0);
+	ActorMap["Player"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["Barn"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["GrassField"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["Player"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	ActorMap["Barn"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	ActorMap["Player"]->SetGlobalPosition({0.f, 0.f, 10.f});
+	ActorMap["Barn"]->SetGlobalPosition({0.f, 0.f, 0.f});
+	ActorMap["Player"]->ChooseCollisionType(2);
+	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
+	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
-	mSMABarnDoor->SetLocalPosition(glm::vec3(200.f, 0.f, 0.f));
 }
 
 void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
-	mActorController = std::make_shared<ActorController>(mSMAPlayer, false, &mSceneCamera);
+	mActorController = std::make_shared<ActorController>(ActorMap["Player"], true, &mSceneCamera);
 
-	mCurrentController = mCameraController;
+	mCurrentController = mActorController;
 }
 
 void Scene::MaterialTextureLoading(Material*& material)
@@ -162,10 +225,14 @@ void Scene::UnloadContent()
 	mDirectionalLight = nullptr;
 	delete mSkybox;
 	mSkybox = nullptr;
-	delete mSMAPlayer;
-	mSMAPlayer = nullptr;
-	delete mSMABarn;
-	mSMABarn = nullptr;
+	delete ActorMap["Player"];
+	ActorMap["Player"] = nullptr;
+	delete ActorMap["Barn"];
+	ActorMap["Barn"] = nullptr;
+	ActorMap["BarnDoor"] = nullptr;
+	delete ActorMap["BarnDoor"];
+	ActorMap["GrassField"] = nullptr;
+	delete ActorMap["GrassField"];
 	delete mSMAInterpolation;
 	mSMAInterpolation = nullptr; 
 
@@ -343,17 +410,18 @@ void Scene::HandleCollision()
 
 void Scene::RenderGUI()
 {
-	const char* items[] = { "FreeCamera", "MovePlayer", "MovePlayerWithCamera" };
+	const char* items[] = { "MovePlayerWithCamera", "MovePlayer", "FreeCamera"  };
 	static int item_current = 0; 
 
 	ImGui::Begin("Select controller: ");
-
+	
 	// Combo box
-	ImGui::Combo("Select Item", &item_current, items, IM_ARRAYSIZE(items));
+	ImGui::Combo("Camera Type", &item_current, items, IM_ARRAYSIZE(items));
 
 	if (item_current == 0)
 	{
-		mCurrentController = mCameraController;
+		mActorController->mIsAttachedToPlayer = true;
+		mCurrentController = mActorController;
 	}
 	else if (item_current == 1)
 	{
@@ -362,9 +430,11 @@ void Scene::RenderGUI()
 	}
 	else if (item_current == 2)
 	{
-		mActorController->mIsAttachedToPlayer = true;
-		mCurrentController = mActorController;
+		mCurrentController = mCameraController;
 	}
+
+	ImGui::Text("Player x value = %f", ActorMap["Player"]->GetGlobalPosition().x);
+	ImGui::Text("Player z value = %f", ActorMap["Player"]->GetGlobalPosition().z);
 
 	ImGui::End();
 }
@@ -385,11 +455,15 @@ void Scene::RenderingScene(float dt)
 	BindDirectionalLight();
 	BindPointLights();
 	BindCamera();
+
+	// Draw stuff
 	RenderSceneGraph(&mSceneGraph, dt);
 	RenderGUI();
 	glDepthFunc(GL_LEQUAL);
 	mSkybox->RenderSkybox(&mSceneCamera);
 	PickingUpObjects();
+	OpenDoor(dt);
+	EnteringHouse();
 }
 
 void Scene::FramebufferSizeCallback(Window* window, int width, int height)

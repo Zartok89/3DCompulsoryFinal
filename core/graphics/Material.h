@@ -30,10 +30,10 @@ public:
     struct MaterialProperties
     {
         //glm::vec3 mColor {1.f, 1.f, 1.f};
-        glm::vec3 mDiffuse{1.f, 1.f, 1.f};
-        glm::vec3 mSpecular{ 1.f, 1.f, 1.f };
-    	glm::vec3 mAmbient{ 1.f, 1.f, 1.f };
-        float mShininess{ 64.f };
+        glm::vec3 mDiffuse{ .5f };
+		glm::vec3 mSpecular{ 1.f };
+    	glm::vec3 mAmbient{ 0.6f };
+        float mShininess{ 32.f };
         float mAlphaCutoff = 1.f;
     };
 
