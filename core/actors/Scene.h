@@ -12,6 +12,7 @@
 #include "lighting/PointLight.h"
 #include "lighting/DirectionalLight.h"
 #include "Mathematics/ParametricCurve.h"
+#include "Mathematics/BarycentricC.h"
 
 class Scene
 {
@@ -96,6 +97,7 @@ public:
 	DirectionalLight* mDirectionalLightGrass{ nullptr };
 	ParametricCurve* ParaCurve;
     MeshActor* mSMAInterpolation{ nullptr };
+    MeshActor* mSMAPlane{ nullptr };
 
 	std::unordered_map<std::string, MeshActor*> ActorMap;
     bool bDoorIsClosed = true;

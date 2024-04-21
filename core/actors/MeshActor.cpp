@@ -11,7 +11,7 @@ AABBcollision MeshActor::GetAABB() const
 	return AABBcollision(GetGlobalPosition(), GetGlobalScale() * 0.5f);
 }
 
-void* MeshActor::ChooseCollisionType(int index, Mesh* mesh)
-{
-	return ICollision::ChooseCollisionType(index, mesh);
-}
+//void* MeshActor::ChooseCollisionType(int index,  std::string* fbx_Path)
+//{
+//	return ICollision::ChooseCollisionType(index,fbx_Path); 
+//}
