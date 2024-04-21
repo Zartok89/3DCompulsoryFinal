@@ -43,7 +43,7 @@ void Scene::PickingUpObjects()
 	for (const auto pickups : mPickupVector)
 	{
 		auto pickupPos = pickups->GetGlobalPosition();
-		auto playerPos = mSMAPlayer->GetGlobalPosition();
+		auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 		if ((playerPos.x <= pickupPos.x + pickupRange && playerPos.x >= pickupPos.x - pickupRange) &&
 			(playerPos.z <= pickupPos.z + pickupRange && playerPos.z >= pickupPos.z - pickupRange ))
 		{
@@ -56,20 +56,20 @@ void Scene::OpenDoor(float dt)
 {
 	float collisionRangeX = 6.f;
 	float collisionRangeZ = 3.5f;
-	glm::vec3 barnLocation = mSMABarn->GetGlobalPosition();
-	auto playerPos = mSMAPlayer->GetGlobalPosition();
+	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
 	if ((playerPos.x <= barnLocation.x && playerPos.x >= barnLocation.x - 4) &&
 	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
 	{
 		if (bDoorIsClosed)
 		{
-			float lerp = mSMABarnDoor->GetLocalPosition().x;
+			float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
 			float maxRange = -700.f;
 			lerp -= dt*1000;
 			if (lerp >= maxRange)
 			{
-				mSMABarnDoor->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+				ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
 			}
 			else
 			{
@@ -79,12 +79,12 @@ void Scene::OpenDoor(float dt)
 	}
 	else
 	{
-		float lerp = mSMABarnDoor->GetLocalPosition().x;
+		float lerp = ActorMap["BarnDoor"]->GetLocalPosition().x;
 		float originalxRange = 0.f;
 		lerp += dt*1000;
 		if (lerp <= originalxRange)
 		{
-			mSMABarnDoor->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
+			ActorMap["BarnDoor"]->SetLocalPosition(glm::vec3(lerp, 0.f, 0.f));
 		}
 		else
 		{
@@ -97,8 +97,8 @@ void Scene::EnteringHouse()
 {
 	float collisionRangeX = 6.f;
 	float collisionRangeZ = 3.5f;
-	glm::vec3 barnLocation = mSMABarn->GetGlobalPosition();
-	auto playerPos = mSMAPlayer->GetGlobalPosition();
+	glm::vec3 barnLocation = ActorMap["Barn"]->GetGlobalPosition();
+	auto playerPos = ActorMap["Player"]->GetGlobalPosition();
 
 	if ((playerPos.x <= barnLocation.x + collisionRangeX && playerPos.x >= barnLocation.x - collisionRangeX) &&
 	(playerPos.z <= barnLocation.z + collisionRangeZ && playerPos.z >= barnLocation.z - collisionRangeZ ))
@@ -107,6 +107,11 @@ void Scene::EnteringHouse()
 		mSceneCamera.SetGlobalPosition(glm::vec3{4.5f, 1.f, 0.f});
 		mSceneCamera.SetGlobalRotation(glm::angleAxis((glm::radians(90.f)), glm::vec3(0.f, 1.f, 0.f)));
 	}
+}
+
+void Scene::TempHouseCollision()
+{
+	
 }
 
 void Scene::MeshActorLoading(Material* mat)
@@ -119,16 +124,17 @@ void Scene::MeshActorLoading(Material* mat)
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Front.png",
 		SOURCE_DIRECTORY + "assets/textures/skybox/Daylight Box_Back.png",
 		});
-	mSMAPlayer = new MeshActor("mStaticMeshActor0");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", mSMAPlayer);
-	mSMABarn = new MeshActor("mSMABarn");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", mSMABarn);
-	mSMABarnDoor = new MeshActor("mSMABarnDoor");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", mSMABarnDoor);
-	mSMAGrassField = new MeshActor("mSMAGrassField");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", mSMAGrassField);
-	mSMABarnHay = new MeshActor("mSMABarnHay");
-	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnHay.fbx", mSMABarnHay);
+
+	ActorMap["Player"] = new MeshActor("mSMAPlayer");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/Horse.fbx", ActorMap["Player"]);
+	ActorMap["Barn"] = new MeshActor("mSMABarn");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barn.fbx", ActorMap["Barn"]);
+	ActorMap["BarnDoor"] = new MeshActor("mSMABarnDoor");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnDoor.fbx", ActorMap["BarnDoor"]);
+	ActorMap["GrassField"] = new MeshActor("mSMAGrassField");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/GrassField.fbx", ActorMap["GrassField"]);
+	ActorMap["BarnHay"] = new MeshActor("mSMABarnHay");
+	AssimpLoader::Load(SOURCE_DIRECTORY + "Assets/Models/barn/barnHay.fbx", ActorMap["BarnHay"]);
 
 	// Spawning pickups
 	mSpawnAmount = 5;
@@ -150,26 +156,26 @@ void Scene::LightingActorLoading()
 void Scene::ActorHierarchyLoading()
 {
 	mSceneGraph.AddChild(&mSceneCamera);
-	mSceneGraph.AddChild(mSMAPlayer);
-	mSceneGraph.AddChild(mSMABarn);
-	mSceneGraph.AddChild(mSMAGrassField);
-	mSMABarn->AddChild(mPointLight);
-	mSMABarn->AddChild(mSMABarnDoor);
-	mSMABarn->AddChild(mSMABarnHay);
+	mSceneGraph.AddChild(ActorMap["Player"]);
+	mSceneGraph.AddChild(ActorMap["Barn"]);
+	mSceneGraph.AddChild(ActorMap["GrassField"]);
+	ActorMap["Barn"]->AddChild(mPointLight);
+	ActorMap["Barn"]->AddChild(ActorMap["BarnDoor"]);
+	ActorMap["Barn"]->AddChild(ActorMap["BarnHay"]);
 	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mSMAInterpolation);
 }
 
 void Scene::ActorPositionCollisionLoading()
 {
-	mSMAPlayer->SetLocalScale(glm::vec3(0.005f));
-	mSMABarn->SetLocalScale(glm::vec3(0.005f));
-	mSMAGrassField->SetLocalScale(glm::vec3(0.005f));
-	mSMAPlayer->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mSMABarn->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
-	mSMAPlayer->SetGlobalPosition({0.f, 0.f, 10.f});
-	mSMABarn->SetGlobalPosition({0.f, 0.f, 0.f});
-	mSMAPlayer->ChooseCollisionType(2);
+	ActorMap["Player"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["Barn"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["GrassField"]->SetLocalScale(glm::vec3(0.005f));
+	ActorMap["Player"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	ActorMap["Barn"]->SetLocalRotation(glm::angleAxis((glm::radians(180.f)), glm::vec3(0.f, 1.f, 0.f)));
+	ActorMap["Player"]->SetGlobalPosition({0.f, 0.f, 10.f});
+	ActorMap["Barn"]->SetGlobalPosition({0.f, 0.f, 0.f});
+	ActorMap["Player"]->ChooseCollisionType(2);
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
@@ -179,7 +185,7 @@ void Scene::CameraAndControllerLoading()
 {
 	mSceneCamera.SetLocalPosition({ 0.f, 3.f, 20.f });
 	mCameraController = std::make_shared<CameraController>(&mSceneCamera);
-	mActorController = std::make_shared<ActorController>(mSMAPlayer, true, &mSceneCamera);
+	mActorController = std::make_shared<ActorController>(ActorMap["Player"], true, &mSceneCamera);
 
 	mCurrentController = mActorController;
 }
@@ -219,10 +225,14 @@ void Scene::UnloadContent()
 	mDirectionalLight = nullptr;
 	delete mSkybox;
 	mSkybox = nullptr;
-	delete mSMAPlayer;
-	mSMAPlayer = nullptr;
-	delete mSMABarn;
-	mSMABarn = nullptr;
+	delete ActorMap["Player"];
+	ActorMap["Player"] = nullptr;
+	delete ActorMap["Barn"];
+	ActorMap["Barn"] = nullptr;
+	ActorMap["BarnDoor"] = nullptr;
+	delete ActorMap["BarnDoor"];
+	ActorMap["GrassField"] = nullptr;
+	delete ActorMap["GrassField"];
 	delete mSMAInterpolation;
 	mSMAInterpolation = nullptr; 
 
@@ -423,8 +433,8 @@ void Scene::RenderGUI()
 		mCurrentController = mCameraController;
 	}
 
-	ImGui::Text("Player x value = %f", mSMAPlayer->GetGlobalPosition().x);
-	ImGui::Text("Player z value = %f", mSMAPlayer->GetGlobalPosition().z);
+	ImGui::Text("Player x value = %f", ActorMap["Player"]->GetGlobalPosition().x);
+	ImGui::Text("Player z value = %f", ActorMap["Player"]->GetGlobalPosition().z);
 
 	ImGui::End();
 }

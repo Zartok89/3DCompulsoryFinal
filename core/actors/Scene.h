@@ -26,6 +26,7 @@ public:
 	void PickingUpObjects();
 	void OpenDoor(float dt);
 	void EnteringHouse();
+	void TempHouseCollision();
 	void ActorHierarchyLoading();
 	void ActorPositionCollisionLoading();
 	void CameraAndControllerLoading();
@@ -93,13 +94,6 @@ public:
 	DirectionalLight* mDirectionalLightGrass{ nullptr };
     MeshActor* mSMAInterpolation{ nullptr };
 
-    //------Scene 1: The Barn------//
-    std::unordered_map<std::string, MeshActor*> ActorMap;
-
-    MeshActor* mSMAPlayer{nullptr};
-    MeshActor* mSMABarn{nullptr};
-    MeshActor* mSMABarnHay{nullptr};
-    MeshActor* mSMABarnDoor{nullptr};
-    MeshActor* mSMAGrassField{nullptr};
+	std::unordered_map<std::string, MeshActor*> ActorMap;
     bool bDoorIsClosed = true;
 };
