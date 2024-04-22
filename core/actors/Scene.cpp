@@ -195,15 +195,17 @@ void Scene::MeshActorLoading(Material* mat)
 	mSpawnAmount = 5;
 	GeneratePickups(mat);
 
-	//Interpolation Curve
+	// Interpolation Curve
 	ParaCurve = new ParametricCurve();
 	mSMAInterpolation = new MeshActor("InterpolationCurve");
 	mSMAInterpolation->mMesh = ParaCurve->CreateInterpolationCurve3Points(0, 13, 0.2f);
 	mSMAInterpolation->mMesh->DrawLine = true;
 
-	//Curve
+	// Plane
 	mSMAPlane = new MeshActor("Plane");
 	mSMAPlane->mMesh = BarycentricC::CreatePlane(-5,-10,5,20,0.1f);
+
+
 }
 
 void Scene::LightingActorLoading()
@@ -225,7 +227,7 @@ void Scene::ActorHierarchyLoading()
 	ActorMap["Barn"]->AddChild(ActorMap["BarnHay"]);
 	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mSMAInterpolation);
-	mSceneGraph.AddChild(mSMAPlane);
+	//mSceneGraph.AddChild(mSMAPlane);
 }
 
 void Scene::ActorPositionCollisionLoading()
@@ -244,6 +246,8 @@ void Scene::ActorPositionCollisionLoading()
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
+	mSMAPlane->SetGlobalPosition({-40.f, -2.f, 0.f});
+
 
 	//Collision handling
 	//std::string PlayerModel = "Assets/Models/Horse.fbx";
@@ -511,6 +515,21 @@ void Scene::RenderGUI()
 	{
         bNPCFollowCurve = !bNPCFollowCurve;
 	}
+
+
+    if (ImGui::Checkbox("Enable CurvedGround", &bDrawBarycentricPlane)) 
+	{
+
+	    if (bDrawBarycentricPlane) 
+		{
+			mSceneGraph.AddChild(mSMAPlane);
+	    }
+	    else 
+		{
+			mSceneGraph.RemoveChild(mSMAPlane);
+	    }
+	}
+
 	ImGui::End();
 
 }

@@ -106,5 +106,5 @@ public:
 	int currentIndex = 0; // Current index in the points vector
 	int direction = 1; // Direction of movement, 1 for forward, -1 for backward
     bool bNPCFollowCurve = false;
-
+    bool bDrawBarycentricPlane = false;
 };
