@@ -6,10 +6,6 @@ void MeshActor::Draw(const Shader* shader) const
 	mMesh->DrawMesh(shader);
 }
 
-AABBcollision MeshActor::GetAABB() const
-{
-	return AABBcollision(GetGlobalPosition(), GetGlobalScale() * 0.5f);
-}
 
 //void* MeshActor::ChooseCollisionType(int index,  std::string* fbx_Path)
 //{

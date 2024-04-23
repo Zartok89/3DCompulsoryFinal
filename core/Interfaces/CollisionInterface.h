@@ -3,7 +3,6 @@
 #include <unordered_map>
 #include <utility>
 #include "mathematics/BarycentricC.h"
-#include "physics/AABBcollision.h"
 #include "string"
 
 class ICollision
@@ -11,7 +10,6 @@ class ICollision
 public:
 	virtual ~ICollision() = default;
 
-	virtual AABBcollision GetAABB() const = 0;
 
 	// Creating a empty function pointer
 	using FunctionPtr = void (*)();
