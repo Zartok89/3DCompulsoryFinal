@@ -122,20 +122,6 @@ void Scene::SimpleCollision(MeshActor* player, float playerWidth, float playerLe
 	}
 }
 
-//void Scene::NPCWalking(MeshActor* NPC, float dt)
-//{
-//    std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
-//
-//    if (NPC->GetGlobalPosition() != tempVec.back().mPosition)
-//    {
-//        glm::vec3 currentPosition = NPC->GetGlobalPosition();
-//        glm::vec3 targetPosition = tempVec[c].mPosition;
-//        glm::vec3 newPosition = glm::mix(currentPosition, targetPosition, 0.1f * dt);
-//        NPC->SetGlobalPosition(newPosition);
-//    }
-//    c++;
-//}
-
 glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t)
 {
 	return a + t * (b - a);
@@ -143,20 +129,23 @@ glm::vec3 lerp(glm::vec3 a, glm::vec3 b, float t)
 
 void Scene::NPCWalking(MeshActor* NPC, float dt)
 {
-	std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
+	if (bNPCFollowCurve)
+	{
+		std::vector<Vertex> tempVec = mSMAInterpolation->mMesh->mVertices;
 
-	t += dt * direction; // Adjust speed by changing deltaTime factor
+		t += dt * direction;
 
-	if (t >= -10.0f) {
-		t = 0.0f;
-		currentIndex += direction;
-		if (currentIndex == tempVec.size() - 1 || currentIndex == 0) {
-			direction *= -1; // Reverse direction at the end points
+		if (t >= -10.0f) {
+			t = 0.0f;
+			currentIndex += direction;
+			if (currentIndex == tempVec.size() - 1 || currentIndex == 0) {
+				direction *= -1;
+			}
 		}
+		glm::vec3 curveInfo = mSMAInterpolation->GetGlobalPosition();
+		glm::vec3 currentPosition = lerp(tempVec[currentIndex].mPosition + curveInfo, tempVec[currentIndex + direction].mPosition + curveInfo, t);
+		NPC->SetGlobalPosition(currentPosition);
 	}
-	glm::vec3 curveInfo = mSMAInterpolation->GetGlobalPosition();
-	glm::vec3 currentPosition = lerp(tempVec[currentIndex].mPosition + curveInfo, tempVec[currentIndex + direction].mPosition + curveInfo, t);
-	NPC->SetGlobalPosition(currentPosition);
 }
 
 //void Scene::SimpleCollision(MeshActor& Player, MeshActor& otherObjec)
@@ -206,15 +195,17 @@ void Scene::MeshActorLoading(Material* mat)
 	mSpawnAmount = 5;
 	GeneratePickups(mat);
 
-	//Interpolation Curve
+	// Interpolation Curve
 	ParaCurve = new ParametricCurve();
 	mSMAInterpolation = new MeshActor("InterpolationCurve");
 	mSMAInterpolation->mMesh = ParaCurve->CreateInterpolationCurve3Points(0, 13, 0.2f);
 	mSMAInterpolation->mMesh->DrawLine = true;
 
-	//Curve
+	// Plane
 	mSMAPlane = new MeshActor("Plane");
 	mSMAPlane->mMesh = BarycentricC::CreatePlane(-5,-10,5,20,0.1f);
+
+
 }
 
 void Scene::LightingActorLoading()
@@ -236,7 +227,7 @@ void Scene::ActorHierarchyLoading()
 	ActorMap["Barn"]->AddChild(ActorMap["BarnHay"]);
 	mSceneGraph.AddChild(mDirectionalLight);
 	mSceneGraph.AddChild(mSMAInterpolation);
-	mSceneGraph.AddChild(mSMAPlane);
+	//mSceneGraph.AddChild(mSMAPlane);
 }
 
 void Scene::ActorPositionCollisionLoading()
@@ -255,6 +246,8 @@ void Scene::ActorPositionCollisionLoading()
 	//mDirectionalLight->SetLightRotation(90.f, 1, 0, 0);
 	mDirectionalLight->SetLightRotation(normalize(glm::vec3(-0.7f, -1.0f, -0.3f)));
 	mDirectionalLight->SetLocalPosition(glm::vec3(0.f, 100.f, 0.f));
+	mSMAPlane->SetGlobalPosition({-40.f, -2.f, 0.f});
+
 
 	//Collision handling
 	//std::string PlayerModel = "Assets/Models/Horse.fbx";
@@ -518,7 +511,27 @@ void Scene::RenderGUI()
 	ImGui::Text("Player x value = %f", ActorMap["Player"]->GetGlobalPosition().x);
 	ImGui::Text("Player z value = %f", ActorMap["Player"]->GetGlobalPosition().z);
 
+	if (ImGui::Button(bNPCFollowCurve ? "NPC ENABLED" : "NPC DISABLED"))
+	{
+        bNPCFollowCurve = !bNPCFollowCurve;
+	}
+
+
+    if (ImGui::Checkbox("Enable CurvedGround", &bDrawBarycentricPlane)) 
+	{
+
+	    if (bDrawBarycentricPlane) 
+		{
+			mSceneGraph.AddChild(mSMAPlane);
+	    }
+	    else 
+		{
+			mSceneGraph.RemoveChild(mSMAPlane);
+	    }
+	}
+
 	ImGui::End();
+
 }
 
 void Scene::RenderingScene(float dt)

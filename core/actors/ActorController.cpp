@@ -18,12 +18,10 @@ void ActorController::MovementNoCameraFollow(float dt)
 	if (mKeyStates[GLFW_KEY_D])
 	{
 		mActor->SetLocalPosition(mActor->GetGlobalPosition() + glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt); 
-		mActor->SetLocalRotation(glm::quat(glm::radians(90.f), 0, 1, 0));
 	}
 	if (mKeyStates[GLFW_KEY_A])
 	{
 		mActor->SetLocalPosition(mActor->GetGlobalPosition() - glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
-		mActor->SetLocalRotation(glm::quat(glm::radians(-90.f), 0, 1, 0));
 	}
 	if (mKeyStates[GLFW_KEY_W])
 	{
@@ -62,14 +60,12 @@ void ActorController::MovementWithCameraFollow(float dt)
 		mActor->SetLocalPosition(mActor->GetGlobalPosition() + glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
 		acceleration.x += movementSpeed;
 		mCamera->SetAcceleration(acceleration);
-		mActor->SetLocalRotation(glm::quat(glm::radians(90.f), 0, 1, 0)); 
 	}
 	if (mKeyStates[GLFW_KEY_A])
 	{
 		mActor->SetLocalPosition(mActor->GetGlobalPosition() - glm::vec3(1.0f * mMovementSpeed, 0.f, 0.f) * dt);
 		acceleration.x -= movementSpeed;
 		mCamera->SetAcceleration(acceleration);
-		mActor->SetLocalRotation(glm::quat(glm::radians(-90.f), 0, 1, 0));
 	}
 	if (mKeyStates[GLFW_KEY_W])
 	{
