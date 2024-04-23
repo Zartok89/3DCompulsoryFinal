@@ -36,50 +36,43 @@ class BarycentricC : Actor
 
 	static glm::vec2 centroid(const glm::vec2& A, const glm::vec2& B, const glm::vec2& C)
 	{
-		return (A * B * C) / 3.f;
+		return (A * B * C) * 0.3f;
 	}
 
-	///Plane Functions
-	///Expression
-	///f(x,y) = x^3 + y^2 + pi(x*y) + pi
-	 
-
-	/*static double xf(const double xIn)
-	{
-		return xIn;
-	}
-	static double yf(const double yIn)
-	{
-		return yIn;
-	}
-	static double zf(const double zIn)
-	{
-		const double pi = glm::pi<double>(); 
-		return pow(xf(zIn), 3) + pow(yf(zIn), 2) +  pi*(xf(zIn) * yf(zIn)) + pi;  
-	}*/
+	
 public:
 
-	static std::vector<glm::vec3> getBarycentricCoordinatesActor(const std::string fbx_Path, const Mesh* mesh)
+	static std::vector<glm::vec3> getBarycentricCoordinatesActor(const Mesh* mesh)
 	{
+		//getVertex = mesh->mVertices;
 		//Itterating over n-elements as the same size as mIndices.
 		//After three iterations the function skips by three
-		std::vector<glm::vec3> BaryCoords{};
-		/*mesh->Load(SOURCE_DIRECTORY + fbx_Path); */
+		std::vector<Vertex> getVertex;
 
-		assert(mesh && "Mesh not in Use");
-	
-		for (auto currentVertex = 0; currentVertex < mesh->mVertices.size(); currentVertex+= 3) 
+		std::vector<glm::vec3> BaryCoords{};
+		glm::vec2 Q;
+		glm::vec2 P;
+		glm::vec2 R;
+		glm::vec2 X;
+
+		/*for (int i = 0; i < 3; i++)
 		{
-			glm::vec2 Q = { mesh->mVertices[currentVertex].mPosition.x,    mesh->mVertices[currentVertex].mPosition.y };
-			glm::vec2 P = { mesh->mVertices[currentVertex+1].mPosition.y,  mesh->mVertices[currentVertex+1].mPosition.y };
-			glm::vec2 R = { mesh->mVertices[currentVertex+2].mPosition.z,  mesh->mVertices[currentVertex+2].mPosition.z };
+			glm::vec3 abc = glm::vec3(i);
+		}*/
+		
+	
+		for (auto currentVertex = 0; currentVertex < mesh->mVertices.size(); currentVertex+= 3)  
+		{ 
+			Q = { mesh->mVertices[currentVertex].mPosition.x,    mesh->mVertices[currentVertex].mPosition.y }; 
+			P = { mesh->mVertices[currentVertex+1].mPosition.y,  mesh->mVertices[currentVertex+1].mPosition.y }; 
+			R = { mesh->mVertices[currentVertex+2].mPosition.z,  mesh->mVertices[currentVertex+2].mPosition.z }; 
 			 
-			glm::vec X = centroid(Q,P,R); 
+			X = centroid(Q,P,R); 
 
 			double areaQPR = triangleArea(Q, P, R);
 			double areaXPR = triangleArea(X, P, R);
 			double areaXQP = triangleArea(X, Q, P);
-			double areaXQR = triangleArea(X, Q, R);
+			double areaXQR = triangleArea(X, Q, R); 
 			
 			double mI = areaXQR / areaQPR;  
 			double mJ = areaXQR / areaQPR;
@@ -87,7 +80,6 @@ public:
 
 			std::cout << "Barycentric Coordinates:" << mI << ", " << mJ << ", " << mK << std::endl;
 			BaryCoords.emplace_back(currentVertex);  
-
 		} 
 		return BaryCoords; 
 
